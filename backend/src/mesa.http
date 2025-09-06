@@ -1,0 +1,31 @@
+@api = http://localhost:3000
+
+### Obtener todas las mesas
+GET {{api}}/mesas
+
+### Agregar una nueva mesa
+POST {{api}}/mesas
+Content-Type: application/json
+
+{
+  "numero": 3
+}
+
+### Editar una mesa existente
+PUT {{api}}/mesas/682fb720b9ac57a504b4a80f
+Content-Type: application/json
+
+{
+  "numero": 2,
+  "estado": "ocupada",
+  "meseroAsignado": "682fd05192eba7954ce4f6f1"
+}
+
+### Asignar un mesero a una mesa
+PUT {{api}}/mesas/asignar/682fd412e04fb5a2b154a4f4/mesero/682fd05192eba7954ce4f6f1
+
+### Liberar una mesa
+PUT {{api}}/mesas/liberar/682fd412e04fb5a2b154a4f4
+
+### Obtener mesas filtradas por estado (libre, ocupada, reservada)
+GET {{api}}/mesas/estado/libre

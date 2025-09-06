@@ -1,0 +1,43 @@
+@api = http://localhost:3000
+
+### Obtener todos los usuarios
+GET {{api}}/usuarios
+
+### Obtener un usuario por ID
+GET {{api}}/usuarios/682fd05192eba7954ce4f6f1
+
+### Obtener un usuario por correo
+GET {{api}}/usuarios/correo/juan.perez@example.com
+
+### Agregar un nuevo usuario
+POST {{api}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "sol Pérez",
+  "correo": "sol.perez@example.com",
+  "rol": "mesero",
+  "contra": "123456"
+}
+
+### Editar un usuario por ID
+PUT {{api}}/usuarios/
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez Actualizado",
+  "correo": "juan.perez@example.com",
+  "rol": "admin"
+}
+
+### Eliminar un usuario por ID
+DELETE {{api}}/usuarios/
+
+####
+POST {{api}}/usuarios/login
+Content-Type: application/json
+
+{
+  "correo": "sol.perez@example.com",
+  "contra": "123456"
+}

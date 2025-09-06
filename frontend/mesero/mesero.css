@@ -1,0 +1,115 @@
+.fondo {
+    height: 100vh; /*Ocupa toda la altura de la ventana */
+    background-image: url('../images/fondo.jpg'); /*Invoca la imagen mediante la url*/
+    background-size: cover; /*Tamaño de la imagen*/
+    background-position: center; /*Centra la imagen*/
+    background-repeat: no-repeat; /*No repite la imagen*/
+}
+
+body {
+    margin: 0; /*Elimina todo posible margen*/
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; /*Aplica la fuente*/
+}
+
+.barra-superior {
+      background-color: #007BFF; /*Da color al fondo*/
+      color: white; /*Cambia el color de la letra*/
+      display: flex; /*Facilita la alineación, oganización y distrubución*/
+      justify-content: space-between; /*Alinea los elementos*/
+      align-items: center; /*Alinea los elementos*/
+      position: fixed; /*Mantiene su posición fija*/
+      top: 0; /*Ubica en la parte superior de la pantalla*/
+      left: 0; /*Ubica en la parte superior de la pantalla*/
+      width: 100%; /*Ocupa todo el ancho de la pantalla*/
+}
+
+.barra-superior a {
+      color: white; /*Cambia el color de la letra*/
+      text-decoration: none; /*Borra la decoración*/
+      margin: 10px; /*Crea un margen*/
+}
+    
+
+img{
+    height: 35px; /*Indica el tamaño de altura*/
+    margin-left: 10px; /*Crea un margen desde el lado izquierdo*/
+}
+
+.logo{
+    display: flex; /*Facilita la alineación, oganización y distrubución*/
+    align-items: center; /*Alinea los elementos*/
+}
+
+.titulo{
+    color: black; /*Cambia el color de la letra*/
+    font-weight: bold; /*Pone la fuente en negrita*/
+    font-size: 20px; /*Indica el tamaño de la letra*/
+    margin-left: 2px; /*Crea un margen desde el lado izquierdo*/
+}
+
+h1{
+    text-align: left; /*El texto comienza desde el lado izquierdo*/
+    margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+}
+
+h4{
+    color:darkslategrey; /*Cambia el color de la letra*/
+    text-align: left; /*El texto comienza desde el lado izquierdo*/
+    margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+}
+
+.contenido{
+    margin-top: 70px; /*Crea un margen desde la parte superior*/
+}
+
+.estados{
+    display: flex; /*Facilita la alineación, oganización y distrubución*/
+    justify-content: space-between; /*Alinea los elementos*/
+    align-items: center; /*Alinea los elementos*/
+}
+
+.pendiente{
+    background-color: white; /*Da color al fondo*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    width: 80%; /*Limita el ancho*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+.preparando{
+    background-color: white; /*Da color al fondo*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    width: 80%; /*Limita el ancho*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+.listo{
+    background-color: white; /*Da color al fondo*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    width: 80%; /*Limita el ancho*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+.barra-inferior{
+    background-color: #007BFF; /*Da color al fondo*/
+    color: white; /*Cambia el color de la letra*/
+    display: flex; /*Facilita la alineación, oganización y distrubución*/
+    justify-content: space-between; /*Alinea los elementos*/
+    align-items: center; /*Alinea los elementos*/
+    position: fixed; /*Mantiene su posición fija*/
+    bottom: 0; /*Ubica en la parte inferior de la pantalla*/
+    left: 0; /*Ubica en la parte superior de la pantalla*/
+    width: 100%; /*Ocupa todo el ancho de la pantalla*/
+    padding: 5px; /*Crea un relleno*/
+}
+
+.barra-inferior a {
+      color: white; /*Cambia el color de la letra*/
+      text-decoration: none; /*Borra la decoración*/
+      margin: 5px; /*Crea un margen*/
+}

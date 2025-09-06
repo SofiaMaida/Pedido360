@@ -1,0 +1,79 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Pedido360</title>
+</head>
+<body>
+    <div class="bg-[url('../images/fondo.jpg')] bg-cover bg-center h-screen">
+    <div class="bg-blue-500 text-white fixed top-0 left-0 w-full flex justify-between items-center p-4">
+        <div flex items-center>
+            <img src="../images/logo.png" class="h-9 w-9">
+            <p class="text-black font-bold text-lg ml-2">Pedido360</p>
+        </div>  
+        <nav>
+        <a href="../inicio/inicio.html" class="text-white no-underline mx-2">Inicio</a>
+        <a href="./pedidos/pedidos.html" class="text-white no-underline mx-2">Pedidos</a>
+        <a href="./menu/menu.html" class="text-white no-underline mx-2">Menú</a>
+        <a href="./mesas/mesas.html" class="text-white no-underline mx-2">Mesas</a>
+        <a href="./reportes/reportes.html" class="text-white no-underline mx-2">Reportes</a>
+        </nav>
+    </div>
+    <div class="mt-16 mx-12">
+        <h1 class="text-left text-xl">Bienvenido, cocina</h1>
+        <h4 class="text-left text-gray-900 mt-4">Gestiona los pedidos de cocina en tiempo real</h4>
+
+        <div class="flex justify-between items-center mt-8">
+            <div class="bg-white shadow-md w-4/5 m-5 p-5 rounded-lg">
+                <div class="card-icon">🕒</div> <div class="card-title">Pendientes</div>
+                <div class="card-number">0</div>
+            </div>
+            <div class="bg-white shadow-md w-4/5 m-5 p-5 rounded-lg">
+                <div class="card-icon">🔔</div> <div class="card-title">En preparación</div>
+                <div class="card-number">4</div>
+            </div>
+            <div class="bg-white shadow-md w-4/5 m-5 p-5 rounded-lg">
+                <div class="card-icon">✅</div> <div class="card-title">Listos</div>
+                <div class="card-number">7</div>
+            </div>
+        </div>
+
+        <div class="cola">
+            <h2 class="text-left text-gray-900 mt-4">Cola de pedidos</h2>
+            <div class="bg-white flex justify-between items-center shadow-md m-5 p-5 rounded-lg">
+                <div class="orden">
+                    <div class="order-header">
+                        <span class="order-id">#1088</span>
+                        <span class="order-table">Mesa 8</span>
+                        <span class="order-time">12:25</span>
+                        <span class="priority-tag">Prioridad Alta</span>
+                    </div>
+                    <div class="dish-list">
+                        <div class="dish-item">
+                            <span class="dish-quantity">2</span>
+                            <span class="dish-name">Ensalada César</span>
+                            <span class="dish-status status-ready">Listo</span>
+                        </div>
+                        <div class="dish-item">
+                            <span class="dish-quantity">1</span>
+                            <span class="dish-name">Pasta Carbonara</span>
+                            <span class="dish-status status-preparing">Preparando</span>
+                            <span class="status-icon">✔</span> </div>
+                         <div class="dish-item">
+                            <span class="dish-quantity">1</span>
+                            <span class="dish-name">Sin tocino</span>
+                            <span class="dish-status status-in-progress">En proceso</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    <div class="bg-blue-500 text-white fixed bottom-0 left-0 w-full flex justify-between items-center p-2">
+    <nav>
+        <a href="../login/login.html" class="text-white no-underline mx-2">Cerrar Cesión</a>
+    </nav>
+    </div>
+    </div>
+</body>

@@ -1,0 +1,28 @@
+.step {
+    padding: 10px 15px;
+    border-left: 4px solid lightgray;
+    margin-left: 10px;
+    position: relative;
+    background-color: #f9fafb;
+    border-radius: 4px;
+  }
+  
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 10px;
+    width: 12px;
+    height: 12px;
+    background-color: lightgray;
+    border-radius: 50%;
+  }
+  
+  .step.completed::before {
+    background-color: #22c55e;
+  }
+  
+  .step.current::before {
+    background-color: #f59e0b;
+  }
+  

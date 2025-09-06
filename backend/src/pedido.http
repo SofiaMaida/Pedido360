@@ -1,0 +1,49 @@
+@api = http://localhost:3000
+
+########## PEDIDOS ##########
+
+GET {{api}}/pedido/6830b5d881811b409becb886/estado
+
+
+### Obtener todos los pedidos
+GET {{api}}/pedido
+
+### Agregar un nuevo pedido
+POST {{api}}/pedido
+Content-Type: application/json
+
+{
+  "mesa": "682fd352e04fb5a2b154a4eb",
+  "descripcion": "2 pizzas margarita",
+  "mesero": "682fd05192eba7954ce4f6f1",
+  "total": 1500,
+  "estado": "pendiente"
+}
+###
+POST {{api}}/pedido
+Content-Type: application/json
+
+{
+  "mesa": "682fb720b9ac57a504b4a80f",
+  "descripcion": "2 ñoquis al pesto y 1 vino",
+  "mesero": "682fd05192eba7954ce4f6f1",
+  "total": 2000,
+  "estado": "pendiente"
+}
+
+
+### Editar un pedido existente
+PUT {{api}}/pedido/684e308430703c81f54503e1
+Content-Type: application/json
+
+{
+  "descripcion": "2 pizzas margarita y 1 limonada",
+  "total": 1800,
+  "estado": "en 10 min"
+}
+
+### Eliminar un pedido
+DELETE {{api}}/pedido/6830b5cf81811b409becb884
+
+### Obtener todos los pedidos por mesero
+GET {{api}}/pedido/mesero/682fd05192eba7954ce4f6f1

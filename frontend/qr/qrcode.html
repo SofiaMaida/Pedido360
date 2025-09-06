@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR inicio.html</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>QR a inicio.html</h1>
+  <canvas id="qrcode"></canvas>
+
+  <script>
+    const url = "https://pedido360-front.s3.us-east-1.amazonaws.com/frontend/inicio.html"; 
+    QRCode.toCanvas(document.getElementById('qrcode'), url, function (error) {
+      if (error) console.error(error);
+      console.log('QR generado!');
+    });
+  </script>
+</body>
+</html>

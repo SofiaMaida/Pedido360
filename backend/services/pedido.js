@@ -9,6 +9,13 @@ import {
 } from "../repository/pedido.js";
 import QRCode from 'qrcode';
 
+const calcTotal = (items = []) =>
+  items.reduce(
+    (acc, it) =>
+      acc + (Number(it?.precioUnitario) || 0) * (Number(it?.cantidad) || 1),
+    0
+  );
+
 // Obtener todos los pedidos
 export const getPedidosService = async () => {
   try {
@@ -32,27 +39,44 @@ export const obtenerPedidoService = async (id) => {
 // Agregar un nuevo pedido
 export const agregarPedidoService = async (pedido) => {
   try {
+    // 'total' calcúlalo acá
+    if (Array.isArray(pedido.items)) {
+      pedido.total = calcTotal(pedido.items);
+    }
+
     const pedidoNuevo = await agregarPedidosRepository(pedido);
+
+    // QR de seguimiento
     const urlSeguimiento = `https://tusitio.com/seguimiento/${pedidoNuevo._id}`;
     const qrCode = await QRCode.toDataURL(urlSeguimiento);
-    return {
-      ...pedidoNuevo.toObject(),
-      qrCode
-    }
+
+    const plain =
+      typeof pedidoNuevo?.toObject === "function"
+        ? pedidoNuevo.toObject()
+        : pedidoNuevo;
+
+    return { ...plain, qrCode };
   } catch (error) {
-    console.error('Error en el Servicio:', error);
-    throw new Error('Error al agregar el pedido');
+    console.error("Error en el Servicio:", error);
+    throw new Error("Error al agregar el pedido");
   }
 };
 
-// Editar un pedido existente
-export const editarPedidoService = async (id, pedidoActual) => {
+// Editar un pedido existente (recalcula total si cambian items)
+export const editarPedidoService = async (id, body) => {
   try {
-    const result = await editarPedidoRepository(id, pedidoActual);
-    return result;
+    if (Array.isArray(body.items)) {
+      body.total = calcTotal(body.items);
+    }
+
+    // Importante: que el repositorio use { new: true, runValidators: true }
+    const actualizado = await editarPedidoRepository(id, body);
+
+    if (!actualizado) throw new Error("Pedido no encontrado");
+    return actualizado;
   } catch (error) {
-    console.error('Error en el Servicio:', error);
-    throw new Error('Error al editar el pedido');
+    console.error("Error en el Servicio:", error);
+    throw new Error("Error al editar el pedido");
   }
 };
 

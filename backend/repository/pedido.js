@@ -1,8 +1,8 @@
 import { Pedido } from './model/Pedido.js';
-import { connect } from '../database/db.js';
+/*import { connect } from '../database/db.js';
 
 connect();
-
+*/
 export const getPedidosRepository = async () => {
     try {
         return await Pedido.find()
@@ -48,7 +48,7 @@ export const eliminarPedidoRepository = async (id) => {
 
 export const editarPedidoRepository = async (id, pedidoActual) => {
     try {
-        const pedido = await Pedido.findByIdAndUpdate(id, pedidoActual, { new: true})
+        const pedido = await Pedido.findByIdAndUpdate(id, pedidoActual, { new: true, runValidators: true})
 
         if (!pedido) {
             console.log('pedido no encontrado')

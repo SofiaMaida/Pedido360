@@ -1,7 +1,7 @@
 import { Mesa } from './model/Mesa.js';
-import { connect } from '../database/db.js';
+/*import { connect } from '../database/db.js';
 
-connect();
+connect();*/
 
 export const getMesasRepository = async () => {
     try {

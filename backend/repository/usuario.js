@@ -1,7 +1,7 @@
 import { Usuario } from './model/Usuario.js'; 
-import { connect } from '../database/db.js';
+/*import { connect } from '../database/db.js';
 
-connect();
+connect();*/
 
 // Obtener todos los usuarios
 export const getUsuariosRepository = async () => {

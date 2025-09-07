@@ -13,11 +13,13 @@ POST {{api}}/pedido
 Content-Type: application/json
 
 {
-  "mesa": "682fd352e04fb5a2b154a4eb",
-  "descripcion": "2 pizzas margarita",
-  "mesero": "682fd05192eba7954ce4f6f1",
-  "total": 1500,
-  "estado": "pendiente"
+  "mesa": "68be07c42d05ca6bd25462d3",
+  "mesero": "68be081c2d05ca6bd25462d6",
+  "estado": "pendiente",
+  "items": [
+    { "nombre": "Milanesa", "precioUnitario": 2500, "cantidad": 2 },
+    { "nombre": "Coca Cola", "precioUnitario": 1200, "cantidad": 1 }
+  ]
 }
 ###
 POST {{api}}/pedido
@@ -33,17 +35,20 @@ Content-Type: application/json
 
 
 ### Editar un pedido existente
-PUT {{api}}/pedido/684e308430703c81f54503e1
+PUT {{api}}/pedido/68be09f9c1e36833d0fd9546
 Content-Type: application/json
 
 {
-  "descripcion": "2 pizzas margarita y 1 limonada",
-  "total": 1800,
-  "estado": "en 10 min"
+  "mesa": "68be07c42d05ca6bd25462d3",
+  "mesero": "68be081c2d05ca6bd25462d6",
+  "estado": "pendiente",
+  "items": [
+    { "nombre": "Milanesa", "precioUnitario": 2500, "cantidad": 2 }
+  ]
 }
 
 ### Eliminar un pedido
-DELETE {{api}}/pedido/6830b5cf81811b409becb884
+DELETE {{api}}/pedido/68be08a62d05ca6bd25462d9
 
 ### Obtener todos los pedidos por mesero
 GET {{api}}/pedido/mesero/682fd05192eba7954ce4f6f1

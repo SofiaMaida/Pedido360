@@ -1,0 +1,102 @@
+.barra{
+    background-color: #007BFF; /*Da color al fondo*/
+      color: white; /*Cambia el color de la letra*/
+      display: flex; /*Facilita la alineación, oganización y distrubución*/
+      justify-content: space-between; /*Alinea los elementos*/
+      align-items: center; /*Alinea los elementos*/
+      position: fixed; /*Mantiene su posición fija*/
+      top: 0; /*Ubica en la parte superior de la pantalla*/
+      left: 0; /*Ubica en la parte superior de la pantalla*/
+      width: 100%; /*Ocupa todo el ancho de la pantalla*/
+}
+
+a {
+      color: white; /*Cambia el color de la letra*/
+      text-decoration: none; /*Borra la decoración*/
+      margin: 10px; /*Crea un margen*/
+}
+
+p{
+    color: black; /*Cambia el color de la letra*/
+    font-weight: bold; /*Pone la fuente en negrita*/
+    font-size: 20px; /*Indica el tamaño de la letra*/
+    margin-left: 2px; /*Crea un margen desde el lado izquierdo*/
+}
+
+.contenido{
+    margin-top: 16px;
+    margin: 12px;
+}
+
+h1{
+    text-align: left; /*El texto comienza desde el lado izquierdo*/
+    margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+}
+
+h4{
+    color:darkslategrey; /*Cambia el color de la letra*/
+    text-align: left; /*El texto comienza desde el lado izquierdo*/
+    margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+}
+
+.tarjetas{
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.pendiente{
+    background-color: white; /*Da color al fondo*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    width: 80%; /*Limita el ancho*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+.preparando{
+    background-color: white; /*Da color al fondo*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    width: 80%; /*Limita el ancho*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+.listo{
+    background-color: white; /*Da color al fondo*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    width: 80%; /*Limita el ancho*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+h2{
+    margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+}
+
+.pedido{
+    background-color: white; /*Da color al fondo*/
+    display: flex; /*Facilita la alineación, oganización y distrubución*/
+    justify-content: space-between; /*Alinea los elementos*/
+    align-items: center; /*Alinea los elementos*/
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    margin: 20px; /*Crea un margen*/
+    padding: 20px; /*Crea un relleno*/
+    border-radius: 10px; /*Bordes redondeados*/
+}
+
+.inferior{
+    background-color: #007BFF; /*Da color al fondo*/
+    color: white; /*Cambia el color de la letra*/
+    display: flex; /*Facilita la alineación, oganización y distrubución*/
+    justify-content: space-between; /*Alinea los elementos*/
+    align-items: center; /*Alinea los elementos*/
+    position: fixed; /*Mantiene su posición fija*/
+    bottom: 0; /*Ubica en la parte inferior de la pantalla*/
+    left: 0; /*Ubica en la parte superior de la pantalla*/
+    width: 100%; /*Ocupa todo el ancho de la pantalla*/
+    padding: 5px; /*Crea un relleno*/
+}

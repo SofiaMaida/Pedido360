@@ -1,0 +1,109 @@
+@api = http://localhost:3000
+
+########## CATEGORÍAS ##########
+
+### Crear "Entradas"
+# @name crearEntradas
+POST {{api}}/menu/categories
+Content-Type: application/json
+
+{
+  "nombre": "Entradas",
+  "orden": 1
+}
+
+### Crear "Platos principales"
+# @name crearPlatos
+POST {{api}}/menu/categories
+Content-Type: application/json
+
+{
+  "nombre": "Platos principales",
+  "orden": 2
+}
+
+### Crear "Bebidas"
+POST {{api}}/menu/categories
+Content-Type: application/json
+
+{
+  "nombre": "Bebidas",
+  "orden": 3
+}
+
+### Crear "Postres"
+POST {{api}}/menu/categories
+Content-Type: application/json
+
+{
+  "nombre": "Postres",
+  "orden": 4
+}
+
+
+### (Opcional) Listar categorías para verificar
+GET {{api}}/menu/categories
+
+
+### Variables de respuesta (se rellenan con los _id devueltos)
+@idEntradas = {{crearEntradas.response.body.$._id}}
+@idPlatos   = {{crearPlatos.response.body.$._id}}
+
+
+
+########## ITEMS ##########
+
+### Bruschettas (Entradas)
+POST {{api}}/menu/items
+Content-Type: application/json
+
+{
+  "categoria": "{{idEntradas}}",
+  "nombre": "Bruschettas",
+  "descripcion": "Pan tostado con tomate, albahaca y oliva",
+  "precio": 1200,
+  "imageUrl": "https://pedido360-assets.s3.us-east-1.amazonaws.com/menu/Bruschettas-e.jpg",
+  "orden": 1
+}
+
+### Empanadas de carne (Entradas)
+POST {{api}}/menu/items
+Content-Type: application/json
+
+{
+  "categoria": "{{idEntradas}}",
+  "nombre": "Empanadas de carne",
+  "descripcion": "Criollas horneadas, carne cortada a cuchillo",
+  "precio": 1000,
+  "imageUrl": "https://pedido360-assets.s3.us-east-1.amazonaws.com/menu/empanadascarne-e.webp",
+  "orden": 2
+}
+
+### Milanesa napolitana (Platos principales)
+POST {{api}}/menu/items
+Content-Type: application/json
+
+{
+  "categoria": "{{idPlatos}}",
+  "nombre": "Milanesa napolitana",
+  "descripcion": "Con salsa de tomate, jamón, queso y papas fritas",
+  "precio": 2500,
+  "imageUrl": "https://pedido360-assets.s3.us-east-1.amazonaws.com/menu/Milanesanapolitana-pp.jpg",
+  "orden": 1
+}
+
+
+
+########## VERIFICACIONES ##########
+
+### Listar todos los ítems
+GET {{api}}/menu/items
+
+### Filtrar ítems por categoría (Entradas)
+GET {{api}}/menu/items?categoryId={{idEntradas}}
+
+### Filtrar ítems por categoría (Platos principales)
+GET {{api}}/menu/items?categoryId={{idPlatos}}
+
+### Buscar por texto (subcadena, p.ej. 'mila' o 'empan')
+GET {{api}}/menu/items?q=mila

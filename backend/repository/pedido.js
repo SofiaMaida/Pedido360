@@ -1,8 +1,5 @@
 import { Pedido } from './model/Pedido.js';
-/*import { connect } from '../database/db.js';
 
-connect();
-*/
 export const getPedidosRepository = async () => {
     try {
         return await Pedido.find()
@@ -91,8 +88,10 @@ export const obtenerPedidoRepository = async (id) => {
   try {
     const pedido = await Pedido.findById(id)
       .populate('mesa', 'numero estado')          // solo número y estado de la mesa
-      .populate('mesero', 'nombre correo rol');   // datos útiles del mesero
+      .populate('mesero', 'nombre correo rol')  // datos útiles del mesero
+      .populate('items.menuItem', 'nombre precio');
 
+      
     if (!pedido) {
       console.log('Pedido no encontrado');
       return null;

@@ -5,6 +5,7 @@ const MenuItemSchema = new mongoose.Schema({
   nombre: { type: String, required: true, trim: true },
   descripcion: { type: String },
   precio: { type: Number, required: true, min: 0 },
+  imageUrl: { type: String, required: true, trim: true },
   orden: { type: Number, default: 0 }
 }, { timestamps: true });
 

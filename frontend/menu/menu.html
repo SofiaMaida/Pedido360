@@ -1,30 +1,83 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Menú • Pedido360</title>
-  <link rel="stylesheet" href="menu.css" />
-</head>
-<body>
-  <header class="hero">
-    <div class="hero__inner">
-      <h1 class="brand">🍽️ Pedido360</h1>
-      <p class="subtitle">Menú Digital</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menú Pedido360</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="menu.css" />
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .btn-filter {
+        transition: all 0.3s ease;
+      }
+      .btn-filter:hover {
+        transform: scale(1.05);
+      }
+      .btn-filter.active {
+        transform: scale(1.1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <header class="gradient-bg text-white py-8 shadow-lg">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-4">
+          <a href="../inicio.html" class="inline-block bg-white text-gray-800 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-100 transition-colors duration-300">
+            ← Volver al Inicio
+          </a>
+        </div>
+        <div class="text-center">
+          <h1 class="text-5xl md:text-6xl font-bold mb-4">
+            🍽️ Pedido360
+          </h1>
+          <p class="text-xl md:text-2xl text-gray-200 mb-6">
+            Menú Digital
+          </p>
+        </div>
+      </div>
+    </header>
+
+   <!-- Main Content -->
+<main class="max-w-7xl mx-auto px-6 py-12">
+  <!-- Filtros -->
+  <div class="text-center mb-12">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8">Explorá nuestro menú</h2>
+    <div id="filters" class="flex justify-center flex-wrap gap-4 mb-8"></div>
+  </div>
+
+
+  <!-- Grid de Menú -->
+  <div id="menu" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+</main>
+
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-8 mt-16">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <p class="text-lg font-medium mb-2">🍽️ Pedido360</p>
+    <p class="text-gray-400">Una aplicación web para la gestión de pedidos en restaurantes.</p>
+    <div class="mt-4 flex justify-center space-x-4">
+      <span class="text-sm text-gray-500">📞 +54 11 1234-5678</span>
+      <span class="text-sm text-gray-500">📍 Av. Corrientes 1234, CABA</span>
     </div>
-  </header>
+  </div>
+</footer>
 
-  <main class="container">
-    <h2 class="section-title">Explorá nuestro menú</h2>
 
-    <!-- Fila de filtros -->
-    <div id="filters" class="filters">
-      <!-- JS insertará los botones acá -->
-    </div>
+<script src="menu.js"></script>
 
-    <!-- Grilla de platos -->
-    <div id="menu" class="menu-grid"></div>
-  </main>
-
-  <script src="menu.js"></script>
-</body>
+  </body>
 </html>

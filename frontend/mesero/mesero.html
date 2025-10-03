@@ -3,87 +3,120 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Pedido360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+
   </head>
-  <body class="bg-[url('/images/fondo.jpg')] bg-cover bg-center min-h-screen flex flex-col font-sans">
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-sans">
 
     <!-- Barra superior fija -->
-    <header class="bg-blue-600 text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10">
+  <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       <div class="flex items-center gap-3">
-        <img src="/images/logo.png" alt="Logo Pedido360" class="h-10 w-10 rounded-full shadow-md" />
-        <p class="text-white font-extrabold text-xl tracking-wide">Pedido360</p>
+  <span class="text-3xl md:text-4xl select-none" style="font-family: 'Inter', sans-serif;">🍽️</span>
+  <p class="text-white text-xl tracking-wide font-bold" style="font-family: 'Inter', sans-serif;">Pedido360</p>
       </div>
-      <nav class="space-x-6 text-sm font-medium">
-        <a href="../mesero/mesero.html" class="hover:underline transition">Inicio</a>
-        <a href="../pedidos/pedidos.html" class="hover:underline transition">Pedidos</a>
-        <a href="/menu/menu.html" class="hover:underline transition">Menú</a>
-        <a href="/mesas/mesas.html" class="hover:underline transition">Mesas</a>
-        <a href="/reportes/reportes.html" class="hover:underline transition">Reportes</a>
-      </nav>
+
+<!-- Menú de usuario  -->
+<div class="relative" id="userMenu">
+  <button id="userMenuButton"
+          class="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/10 transition"
+          aria-haspopup="menu" aria-expanded="false">
+    <span id="userAvatar"
+          class="h-9 w-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center">
+      BL
+    </span>
+    <span id="userName" class="hidden sm:inline font-medium">Brenda Lopez</span>
+    <!-- Flecha -->
+    <svg id="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+         class="h-4 w-4 transition-transform" fill="currentColor">
+      <path fill-rule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+            clip-rule="evenodd" />
+    </svg>
+  </button>
+
+  <!-- Dropdown -->
+  <div id="userDropdown"
+       class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 hidden z-20">
+    <a href="/perfil/perfil.html"
+       class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">Mi perfil</a>
+    <button id="logoutBtn"
+            class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50">
+      Cerrar sesión
+    </button>
+  </div>
+</div>
+
     </header>
 
     <!-- Contenido principal -->
-    <main class="flex-grow mt-24 px-6 md:px-12 max-w-7xl mx-auto w-full pb-32">
+    <main class="flex-grow mt-24 px-6 md:px-12 max-w-7xl mx-auto w-full pb-28">
       <!-- Bienvenida -->
       <section class="mb-10">
-        <h1 class="text-3xl font-bold text-center text-blue-900 bg-blue-100 p-6 rounded-xl shadow-md">
+        <h1 class="text-3xl font-bold text-center text-purple-800 bg-violet-100 p-6 rounded-xl shadow-md">
           ¡Bienvenido al sistema de pedidos!
         </h1>
-    
       </section>
+<section class="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-8 items-stretch mb-16">
+  <!-- Panel de accesos rápidos -->
+  <aside class="bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4 md:w-80">
+    <a href="./pedidos.html" 
+       class="w-full py-5 rounded-lg text-center font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 text-lg transition">
+      📋 Pedidos asignados
+    </a>
+    <a href="/mesas/mesas.html" 
+       class="w-full py-5 rounded-lg text-center font-semibold text-green-700 bg-green-50 hover:bg-green-100 text-lg transition">
+      🍽️ Mesas
+    </a>
+    <a href="/menu/menu.html" 
+       class="w-full py-5 rounded-lg text-center font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 text-lg transition">
+      📜 Menú
+    </a>
+    <a href="#" 
+       class="w-full py-5 rounded-lg text-center font-semibold text-pink-700 bg-pink-50 hover:bg-pink-100 text-lg transition">
+      ➕ Nuevo pedido
+    </a>
+  </aside>
 
-      <!-- Tarjetas resumen -->
-      <section class="flex flex-wrap gap-6 justify-center mb-16">
-        <article class="bg-white shadow-lg w-64 p-6 rounded-2xl flex flex-col items-center transition hover:scale-105 hover:shadow-xl duration-300">
-          <div class="text-5xl mb-3">🕒</div>
-          <p class="text-gray-700 font-semibold mb-1" >Pendientes</p>
-          <p class="text-3xl font-bold text-blue-700"id="contadorPendientes">0</p>
-        </article>
-        <article class="bg-white shadow-lg w-64 p-6 rounded-2xl flex flex-col items-center transition hover:scale-105 hover:shadow-xl duration-300">
-          <div class="text-5xl mb-3">🔔</div>
-          <p class="text-gray-700 font-semibold mb-1" >En preparación</p>
-          <p class="text-3xl font-bold text-yellow-500" id="contadorPreparacion">0</p>
-        </article>
-        <article class="bg-white shadow-lg w-64 p-6 rounded-2xl flex flex-col items-center transition hover:scale-105 hover:shadow-xl duration-300">
-          <div class="text-5xl mb-3">⏳</div>
-          <p class="text-gray-700 font-semibold mb-1" >Ya casi</p>
-          <p class="text-3xl font-bold text-orange-600" id="contadorYaCasi">0</p>
-        </article>
-        <article class="bg-white shadow-lg w-64 p-6 rounded-2xl flex flex-col items-center transition hover:scale-105 hover:shadow-xl duration-300">
-          <div class="text-5xl mb-3">✅</div>
-          <p class="text-gray-700 font-semibold mb-1" >Listos</p>
-          <p class="text-3xl font-bold text-green-600" id="contadorListos">0</p>
-        </article>
-      </section>
+  <!-- Tarjetas resumen con la misma altura -->
+  <div class="grid grid-cols-2 grid-rows-2 gap-6 h-full">
+    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+      <div class="text-4xl mb-2">🕒</div>
+      <p class="text-gray-700 font-semibold">Pendientes</p>
+      <p class="text-2xl font-bold text-blue-700" id="contadorPendientes">0</p>
+    </article>
 
-      <!-- Tabla de pedidos -->
-      <section>
-        <h2 class="text-2xl font-bold mb-4 text-blue-900 bg-blue-100 px-4 py-2 rounded-lg shadow-md w-fit">
-  Pedidos asignados
-</h2>
-        <div class="overflow-x-auto rounded-lg shadow-md">
-          <table class="min-w-full bg-white text-sm text-gray-800">
-            <thead class="bg-blue-600 text-white">
-              <tr>
-                <th class="px-6 py-3 text-left font-semibold tracking-wide">#</th>
-                <th class="px-6 py-3 text-left font-semibold tracking-wide">Mesa</th>
-                <th class="px-6 py-3 text-left font-semibold tracking-wide">Estado</th>
-                <th class="px-6 py-3 text-left font-semibold tracking-wide">Fecha</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTablaPedidos">
-              <!-- Filas insertadas dinámicamente -->
-            </tbody>
-          </table>
-        </div>
-      </section>
+    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+      <div class="text-4xl mb-2">🔔</div>
+      <p class="text-gray-700 font-semibold">En preparación</p>
+      <p class="text-2xl font-bold text-yellow-500" id="contadorPreparacion">0</p>
+    </article>
+
+    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+      <div class="text-4xl mb-2">⏳</div>
+      <p class="text-gray-700 font-semibold">Ya casi</p>
+      <p class="text-2xl font-bold text-orange-600" id="contadorYaCasi">0</p>
+    </article>
+
+    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+      <div class="text-4xl mb-2">✅</div>
+      <p class="text-gray-700 font-semibold">Listos</p>
+      <p class="text-2xl font-bold text-green-600" id="contadorListos">0</p>
+    </article>
+  </div>
+</section>
+
+
+
     </main>
 
-    <!-- Barra inferior fija -->
+    <!-- Barra inferior fija 
     <footer class="bg-blue-600 text-white fixed bottom-0 left-0 w-full flex justify-end items-center p-3 shadow-inner z-10">
       <a href="/login/login.html" class="hover:underline mx-6 text-sm font-medium">Cerrar sesión</a>
-    </footer>
+    </footer> 
+    -->
+
     <script src="./mesero.js"></script>
   </body>
 </html>

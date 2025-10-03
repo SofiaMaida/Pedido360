@@ -1,6 +1,6 @@
+
 .fondo {
     height: 100vh; /*Ocupa toda la altura de la ventana */
-    background-image: url('../images/fondo.jpg'); /*Invoca la imagen mediante la url*/
     background-size: cover; /*Tamaño de la imagen*/
     background-position: center; /*Centra la imagen*/
     background-repeat: no-repeat; /*No repite la imagen*/

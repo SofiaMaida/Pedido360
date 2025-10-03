@@ -4,11 +4,10 @@
 GET {{api}}/usuarios
 
 ### Obtener un usuario por ID
-GET {{api}}/usuarios/682fd05192eba7954ce4f6f1
+GET {{api}}/usuarios/68be081c2d05ca6bd25462d6
 
 ### Obtener un usuario por correo
-GET {{api}}/usuarios/correo/juan.perez@example.com
-
+GET {{api}}/usuarios/correo/ssofia.perez@example.com
 ### Agregar un nuevo usuario
 POST {{api}}/usuarios
 Content-Type: application/json
@@ -38,6 +37,6 @@ POST {{api}}/usuarios/login
 Content-Type: application/json
 
 {
-  "correo": "sol.perez@example.com",
+  "correo": "ssofia.perez@example.com",
   "contra": "123456"
 }

@@ -1,8 +1,8 @@
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault(); // Evita que recargue la página
 
-  const correo = document.getElementById('correoInput').value;
-  const contra = document.getElementById('passwordInput').value;
+  const correo = document.getElementById('email').value;
+  const contra = document.getElementById('password').value;
 
   try {
     const response = await fetch('http://localhost:3000/usuarios/login', {
@@ -28,7 +28,7 @@ console.log("Respuesta completa del login:", data);
 
         window.location.href = '../mesero/mesero.html';
       } else {
-        alert(`¡Login exitoso! Rol detectado: ${rol}`);
+        alert(`¡Login exitoso! Rol detectado: ${usuario.rol}`);
         // Podés redirigir a otra página según el rol:
         // if (data.rol === 'admin') window.location.href = 'admin.html';
         // if (data.rol === 'cocinero') window.location.href = 'cocinero.html';

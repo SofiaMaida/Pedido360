@@ -91,5 +91,5 @@ fetch(`http://localhost:3000/pedido/mesero/${idMesero}`)
     localStorage.removeItem('mozo');
     sessionStorage.clear();
     // Redirige al login
-    window.location.href = '/login/login.html';
+    window.location.href = './login.html';
   });

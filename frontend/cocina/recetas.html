@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Pedido360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10"
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl md:text-4xl select-none" style="font-family:'Inter', sans-serif;">🍽️</span>
+        <p class="text-white text-xl tracking-wide font-bold" style="font-family:'Inter', sans-serif;">Pedido360</p>
+      </div>
+
+      <!-- Menú usuario (puedes pegar el mismo de tu dashboard) -->
+      <div class="relative" id="userMenu">
+        <button id="userMenuButton" class="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/10 transition"
+                aria-haspopup="menu" aria-expanded="false">
+          <span id="userAvatar" class="h-9 w-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center">BL</span>
+          <span id="userName" class="hidden sm:inline font-medium">Brenda Lopez</span>
+          <svg id="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+               class="h-4 w-4 transition-transform" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div id="userDropdown" class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 hidden z-20">
+          <a href="/perfil/perfil.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">Mi perfil</a>
+          <button id="logoutBtn" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="flex-grow mt-32 px-6 md:px-12 max-w-7xl mx-auto w-full pb-28">
+      <section class="pt-8">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-bold text-gray-800 mb-8">
+            Lista de recetas
+          </h2>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl shadow-xl">
+          <table class="min-w-full text-sm text-gray-800 bg-white/90 rounded-2xl overflow-hidden">
+            <thead class="bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
+              <tr>
+                <th class="px-6 py-4 text-left font-semibold tracking-wide">Nombre</th>
+                <th class="px-6 py-4 text-left font-semibold tracking-wide">Ingredientes</th>
+                <th class="px-6 py-4 text-left font-semibold tracking-wide">Pasos</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoTablaPedidos" class="divide-y divide-gray-200 text-left">
+          <!-- Ejemplo de fila -->
+          <tr class="hover:bg-violet-50 transition">
+            <td class="px-6 py-4">Ratatouille</td>
+            <td class="px-6 py-4">
+                <ul>
+                <li>1 zucchini</li>
+                <li>1 berenjena</li>
+                <li>3 tomates perita</li>
+                <li>1 diente de ajo</li>
+                <li>1/2 cebolla</li>
+                <li>1 pimiento morrón</li>
+                <li>1 lata de tomate cubeteado</li>
+                <li>Sal a/g</li>
+                <li>Laurel a/g</li>
+                <li>Tomillo a/g</li>
+                <li>Pimienta a/g</li>
+                <li>Aceite de oliva a/g</li>
+            </ul></td>
+            <td class="px-6 py-4">
+            <ol>
+                <li>Picar el ajo, la cebolla, el pimiento morrón bien chiquitos.</li>
+                <li>Cocinar en aceite de oliva, agregar sal. Cuando la cebolla esté transparente agregarle la lata de tomate cubeteado, el tomillo, el laurel y salpimentar. Tapar y dejar cocinar a fuego lento.</li>
+                <li>Cortar la berenjena, el zucchini y el tomate en rodajas lo más finas y parejas posibles.</li>
+                <li>Una vez cocida la salsa, triturar.</li>
+                <li>En una fuente apta para horno, poner la salsa en la base, bien distribuida.</li>
+                <li>Disponer las rodajas de verdura alternando.</li>
+                <li>Rociar con aceite de oliva por arriba y llevar a un horno precalentado a 150° por el mayor tiempo posible. Una hora y media más o menos, hasta que las verduras queden bien tiernas</li>
+            </ol></td>
+          </tr>
+        </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="./recetas.js"></script>
+  </body>
+</html>

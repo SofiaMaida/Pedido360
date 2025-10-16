@@ -12,31 +12,33 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     });
 
     const data = await response.json();
-console.log("Respuesta completa del login:", data);
+    console.log("Respuesta completa del login:", data);
 
-    if (response.ok) {
-      const usuario = data.usuario;
-       if (!usuario || !usuario._id) {
-    alert('Error: el servidor no devolvió datos válidos del usuario');
-    return;
-  }
-  localStorage.setItem('usuarioId', usuario._id);
-  localStorage.setItem('usuarioNombre', usuario.nombre);
-  localStorage.setItem('usuarioRol', usuario.rol);
- 
-     if (usuario.rol === 'mesero') {
+    // Si el backend devuelve usuario en cualquier caso, usarlo
+    const usuario = data && data.usuario ? data.usuario : null;
+    if (!usuario || !usuario._id) {
+      const mensaje = data && data.mensaje ? data.mensaje : 'Error: el servidor no devolvió datos válidos del usuario';
+      alert(mensaje);
+      return;
+    }
 
-        window.location.href = '../mesero/mesero.html';
-      } else if (usuario.rol === 'admin') {
-        window.location.href = '../administrador/admin.html';
-      } else {
-        alert(`¡Login exitoso! Rol detectado: ${usuario.rol}`);
-        // Podés redirigir a otra página según el rol:
-        // if (data.rol === 'admin') window.location.href = 'admin.html';
-        // if (data.rol === 'cocinero') window.location.href = 'cocinero.html';
-      }
+    // Guardar datos en localStorage
+    localStorage.setItem('usuarioId', usuario._id);
+    localStorage.setItem('usuarioNombre', usuario.nombre || '');
+    localStorage.setItem('usuarioRol', usuario.rol || '');
+
+    const rol = (usuario.rol || '').toString().trim().toLowerCase();
+    console.log('Rol normalizado:', rol);
+
+    if (rol.includes('mesero')) {
+      window.location.href = '../mesero/mesero.html';
+    } else if (rol.includes('admin')) {
+      window.location.href = '../administrador/admin.html';
+    } else if (rol.includes('cocinero')) {
+      window.location.href = '../cocina/cocina.html';
     } else {
-      alert(data.mensaje);
+      alert(`¡Login exitoso! Rol detectado: ${usuario.rol}`);
+      window.location.href = '../inicio.html';
     }
   } catch (error) {
     alert('Error de conexión con el servidor');

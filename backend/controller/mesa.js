@@ -11,10 +11,8 @@ import {
 export const getMesasController = async (req, res) => {
   try {
     let mesas = await listarMesasService();
-    if(mesas.length === 0){
-      return res.status(200).send('La bbdd está vacía.');
-    }
-    return res.status(200).json(mesas);
+    // Siempre devolver un array JSON, incluso si está vacío
+    return res.status(200).json(mesas || []);
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: 'Error al obtener las mesas' });

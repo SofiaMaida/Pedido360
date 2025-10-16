@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedido360 | Nuevo pedido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-[Inter]">
+    <!-- Barra superior -->
+    <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl md:text-4xl select-none">🍽️</span>
+        <p class="text-white text-xl tracking-wide font-bold">Pedido360</p>
+      </div>
+
+      <!-- Menú de usuario -->
+      <div class="relative" id="userMenu">
+        <button id="userMenuButton" class="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/10 transition" aria-haspopup="menu" aria-expanded="false">
+          <span id="userAvatar" class="h-9 w-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center">BL</span>
+          <span id="userName" class="hidden sm:inline font-medium">Brenda Lopez</span>
+          <svg id="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="h-4 w-4 transition-transform" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div id="userDropdown" class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 hidden z-30">
+          <a href="/perfil/perfil.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">Mi perfil</a>
+          <button id="logoutBtn" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow mt-24 px-6 md:px-10 lg:px-16 xl:px-24 pb-24">
+      <div class="max-w-6xl mx-auto w-full space-y-8">
+        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-purple-700">
+          <a href="mesero.html" class="hover:underline">inicio</a>
+          <span class="text-gray-400">/</span>
+          <span class="font-semibold text-purple-900">Nuevo pedido</span>
+        </nav>
+
+        <header class="bg-white/80 backdrop-blur rounded-3xl shadow-lg px-8 py-7 flex flex-col gap-3">
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 class="text-2xl md:text-3xl font-bold text-purple-900">Registrar nuevo pedido</h1>
+              <p class="text-gray-600 mt-1">Captura los datos del pedido y agrega los productos solicitados por la mesa.</p>
+            </div>
+           
+          </div>
+        </header>
+
+        <div id="alertContainer" class="hidden rounded-2xl border border-green-200 bg-green-50 text-green-700 px-5 py-4 text-sm font-medium"></div>
+        <div id="errorContainer" class="hidden rounded-2xl border border-red-200 bg-red-50 text-red-700 px-5 py-4 text-sm font-medium"></div>
+
+        <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] items-start">
+          <form id="formNuevoPedido" class="bg-white rounded-3xl shadow-lg border border-purple-50 px-6 md:px-8 py-8 space-y-8">
+            <div class="grid gap-6 md:grid-cols-2">
+              <label class="flex flex-col gap-2">
+                <span class="text-sm font-semibold text-purple-900">Mesa</span>
+                <select id="mesa" name="mesa" class="rounded-xl border border-purple-100 bg-purple-50/60 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" required>
+                  <option value="" disabled selected>Selecciona una mesa</option>
+                </select>
+              </label>
+
+              <label class="flex flex-col gap-2">
+                <span class="text-sm font-semibold text-purple-900">Mesero responsable</span>
+                <select id="mesero" name="mesero" class="rounded-xl border border-purple-100 bg-purple-50/60 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" required>
+                  <option value="" disabled selected>Selecciona un mesero</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="flex flex-col gap-2">
+              <span class="text-sm font-semibold text-purple-900">Notas para cocina</span>
+              <textarea id="descripcion" name="descripcion" rows="3" class="rounded-2xl border border-purple-100 bg-purple-50/60 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none" placeholder="Ej. Sin cebolla, bebida sin hielo..."></textarea>
+            </label>
+
+            <section class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-purple-900">Productos del pedido</h2>
+                <button id="agregarItemBtn" type="button" class="inline-flex items-center gap-2 rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 transition">
+                  <span class="text-lg leading-none">＋</span>
+                  Añadir producto
+                </button>
+              </div>
+              <p class="text-sm text-gray-500">Selecciona productos del menú o agrega artículos personalizados con precio y cantidad.</p>
+              <div class="space-y-4" id="itemsContainer"></div>
+            </section>
+
+            <div class="flex flex-col gap-4 border-t border-purple-100 pt-6">
+              <div class="flex items-center justify-between text-base font-semibold text-purple-900">
+                <span>Total estimado</span>
+                <span id="totalPedido" class="text-2xl font-extrabold text-purple-700">S/ 0.00</span>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-3">
+                <a href="/mesero/mesero.html" class="inline-flex justify-center items-center rounded-full border border-purple-200 px-5 py-2.5 text-sm font-semibold text-purple-700 hover:bg-purple-50 transition">Cancelar</a>
+                <button type="submit" class="inline-flex justify-center items-center rounded-full bg-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-200 hover:bg-purple-700 transition">
+                  Guardar pedido
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <aside class="bg-white rounded-3xl shadow-lg border border-purple-50 px-6 py-8 space-y-6">
+            <div>
+              <h2 class="text-lg font-semibold text-purple-900">Resumen rápido</h2>
+              <p class="text-sm text-gray-500">Revisa los artículos añadidos antes de confirmar el pedido.</p>
+            </div>
+            <ul id="resumenItems" class="space-y-3 text-sm text-gray-700">
+              <li class="text-gray-400">Agrega productos para ver el resumen aquí.</li>
+            </ul>
+            <div class="rounded-2xl bg-purple-50/80 border border-purple-100 px-4 py-4">
+              <p class="text-sm font-medium text-purple-900">¿Todo listo?</p>
+              <p class="text-xs text-purple-700 mt-1">Presiona “Guardar pedido” para enviarlo a cocina y generar el seguimiento automáticamente.</p>
+            </div>
+          </aside>
+        </section>
+      </div>
+    </main>
+
+    <footer class="border-t border-purple-100 bg-white/90 backdrop-blur py-4">
+      <div class="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 xl:px-24 text-xs text-gray-500">
+        © Pedido360. Todos los derechos reservados.
+      </div>
+    </footer>
+
+    <script src="./nuevo-pedido.js" type="module"></script>
+  </body>
+</html>

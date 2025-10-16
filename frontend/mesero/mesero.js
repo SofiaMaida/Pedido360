@@ -4,58 +4,80 @@ console.log("ID del mesero recuperado:", idMesero);
 fetch(`http://localhost:3000/pedido/mesero/${idMesero}`)
   .then(res => res.json())
   .then(pedidos => {
-    console.log('Pedidos del mesero:', pedidos); 
-    const tbody = document.getElementById('cuerpoTablaPedidos');
-    tbody.innerHTML = '';
+    console.log('Pedidos del mesero:', pedidos);
+
+    // En la plantilla del mesero la tabla (con id 'tablaPedidos') puede o no existir.
+    // Si existe, limpiamos y renderizamos filas; si no, sólo actualizamos contadores.
+    const tbody = document.getElementById('tablaPedidos');
+    if (!tbody) {
+      console.warn("No se encontró el elemento tbody con id 'tablaPedidos'. La tabla será omitida y solo se actualizarán los contadores.");
+    } else {
+      tbody.innerHTML = '';
+    }
 
     let pendientes = 0;
     let preparacion = 0;
     let yaCasi = 0;
     let listos = 0;
 
+    if (!Array.isArray(pedidos)) pedidos = [];
+
     pedidos.forEach((pedido, index) => {
       const fila = document.createElement('tr');
+      const fecha = new Date(pedido.createdAt || pedido.creadoEn || Date.now()).toLocaleString();
       fila.innerHTML = `
         <td class="px-6 py-3">${index + 1}</td>
-        <td class="px-6 py-3">${pedido.mesa.numero || 'N/A'}</td>
-        <td class="px-6 py-3">${pedido.estado}</td>
-        <td class="px-6 py-3">${new Date(pedido.creadoEn).toLocaleString()}</td>
+        <td class="px-6 py-3">${pedido.mesa?.numero || 'N/A'}</td>
+        <td class="px-6 py-3">${pedido.descripcion || '-'}</td>
+        <td class="px-6 py-3">${pedido.estado || '-'}</td>
+        <td class="px-6 py-3">${fecha}</td>
       `;
-      tbody.appendChild(fila);
+      if (tbody) {
+        tbody.appendChild(fila);
+      }
 
-      // Contar según estado
-      switch (pedido.estado) {
+      // Contar según estado (normalizamos a minúsculas)
+      const estado = (pedido.estado || '').toString().toLowerCase();
+      switch (estado) {
         case 'pendiente':
           pendientes++; break;
         case 'preparando':
           preparacion++; break;
         case 'en 10 min':
+        case 'en 10mins':
+        case 'en 10 min.':
           yaCasi++; break;
         case 'listo para servir':
+        case 'listo':
           listos++; break;
       }
     });
 
-    document.getElementById('contadorPendientes').textContent = pendientes;
-    document.getElementById('contadorPreparacion').textContent = preparacion;
-    document.getElementById('contadorYaCasi').textContent = yaCasi;
-    document.getElementById('contadorListos').textContent = listos;
+    // Actualizar contadores solo si existen en el DOM
+    const setIfExists = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+      else console.warn(`Elemento con id '${id}' no encontrado.`);
+    };
+
+    setIfExists('contadorPendientes', pendientes);
+    setIfExists('contadorPreparacion', preparacion);
+    setIfExists('contadorYaCasi', yaCasi);
+    setIfExists('contadorListos', listos);
   })
   .catch(error => console.error('Error al cargar pedidos:', error));
-  // 1) Obtener nombre del mozo (usa lo que tengas guardado)
-  // Ejemplo: { nombre: "Brenda Lopez" } almacenado en localStorage como "mozo"
-  const mozo = JSON.parse(localStorage.getItem('mozo') || '{}');
-  const nombre = mozo.nombre || 'Mozo invitado';
+  // 1) Obtener nombre del usuario (guardado en login)
+  const nombre = localStorage.getItem('usuarioNombre') || 'Mesero invitado';
 
-  // 2) Setear nombre e iniciales
+  // 2) Setear nombre e iniciales (protegemos si los elementos no existen)
   const userNameEl = document.getElementById('userName');
   const userAvatarEl = document.getElementById('userAvatar');
-  userNameEl.textContent = nombre;
+  if (userNameEl) userNameEl.textContent = nombre;
 
   function getInitials(n) {
     return n.trim().split(/\s+/).map(p => p[0]).slice(0,2).join('').toUpperCase();
   }
-  userAvatarEl.textContent = getInitials(nombre);
+  if (userAvatarEl) userAvatarEl.textContent = getInitials(nombre);
 
   // 3) Toggle del dropdown + accesibilidad
   const userMenu = document.getElementById('userMenu');
@@ -86,10 +108,14 @@ fetch(`http://localhost:3000/pedido/mesero/${idMesero}`)
   });
 
   // 4) Cerrar sesión
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    // Limpia lo que uses para sesión
-    localStorage.removeItem('mozo');
-    sessionStorage.clear();
-    // Redirige al login
-    window.location.href = '/login/login.html';
-  });
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      // Limpia lo que uses para sesión
+      localStorage.removeItem('usuarioId');
+      localStorage.removeItem('usuarioNombre');
+      sessionStorage.clear();
+      // Redirige al login (ruta relativa)
+      window.location.href = '../login/login.html';
+    });
+  }

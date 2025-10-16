@@ -8,7 +8,7 @@ POST {{api}}/mesas
 Content-Type: application/json
 
 {
-  "numero": 3
+  "numero": 
 }
 
 ### Editar una mesa existente

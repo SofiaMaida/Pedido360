@@ -1,5 +1,6 @@
-// ===== Identidad del usuario =====
-const nombre = localStorage.getItem('usuarioNombre') || 'Mesero invitado';
+// ===== Identidad del usuario (opcional) =====
+const mozo = JSON.parse(localStorage.getItem('mozo') || '{}');
+const nombre = mozo.nombre || 'Mozo invitado';
 const userNameEl = document.getElementById('userName');
 const userAvatarEl = document.getElementById('userAvatar');
 userNameEl.textContent = nombre;
@@ -18,10 +19,7 @@ btn.addEventListener('click', e => {
 });
 document.addEventListener('click', e => { if (!userMenu.contains(e.target)) { dd.classList.add('hidden'); chevron.classList.remove('rotate-180'); } });
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('usuarioNombre');
-  localStorage.removeItem('usuarioId');
-  sessionStorage.clear();
-  window.location.href = '../login/login.html';
+  localStorage.removeItem('mozo'); sessionStorage.clear(); window.location.href = '/login/login.html';
 });
 
 // ===== Mesas: consumir API en lugar de data hardcodeada =====
@@ -34,7 +32,8 @@ const ESTADOS = [
   { value: 'reservada',    label: 'Reservada',    cls: 'bg-blue-100 text-blue-700' },
   { value: 'mantenimiento',label: 'Mantenimiento', cls: 'bg-gray-200 text-gray-600' },
 ];
-let mesas = []; // se llenará desde la API
+
+let mesas = [];
 
 // Helpers
 const estadoMeta = (v) => ESTADOS.find(e => e.value === v) || ESTADOS[0];
@@ -54,12 +53,9 @@ function selectEstadoHTML(actual){
 
 function renderFila(mesa){
   const meta = estadoMeta(mesa.estado);
-  // Backend devuelve _id y numero. si no hay campo `editable`, asumimos editable = true salvo mantenimiento
   const canEdit = mesa.hasOwnProperty('editable') ? !!mesa.editable : (mesa.estado !== 'mantenimiento');
-  const rowId = mesa._id || mesa.id || (mesa.numero !== undefined ? String(mesa.numero) : null) || null;
-  const numero = (mesa.numero !== undefined && mesa.numero !== null && mesa.numero !== '')
-    ? mesa.numero
-    : (mesa._id ? String(mesa._id).slice(-6) : 'N/A');
+  const rowId = mesa._id || mesa.id || mesa.numero;
+  const numero = mesa.numero || rowId;
 
   return `
     <tr data-id="${rowId}">
@@ -82,10 +78,10 @@ function renderFila(mesa){
                <button class="btn-guardar bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700">Guardar</button>
                <button class="btn-cancelar bg-gray-200 text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
              </div>`
-          : `<button class="inline-flex items-center gap-2 text-gray-500 bg-gray-100 px-3 py-2 rounded-lg" disabled aria-disabled="true">
+          : `<span class="inline-flex items-center gap-2 text-gray-500">
                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 015 5v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2h1V7a5 5 0 015-5zm3 8V7a3 3 0 00-6 0v3h6z"/></svg>
                No editable
-             </button>`
+             </span>`
         }
       </td>
     </tr>
@@ -93,29 +89,18 @@ function renderFila(mesa){
 }
 
 async function renderTabla(){
-  const tbody = document.getElementById('tbodyMesas');
-  if (!tbody) return;
-  
-  tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">Cargando mesas...</td></tr>';
-  
   try {
     const res = await fetch(`${API_BASE}/mesas`);
-    if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
-    
     const data = await res.json();
-    console.log('Mesas recibidas desde API (mesero):', data);
-    mesas = data;
-    
-    if (mesas.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">No hay mesas disponibles</td></tr>';
-    } else {
-      tbody.innerHTML = mesas.map(renderFila).join('');
-    }
+    mesas = Array.isArray(data) ? data : [];
   } catch (err) {
     console.error('Error al obtener mesas desde API:', err);
     mesas = [];
-    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-red-600">Error al cargar las mesas. Por favor, recarga la página.</td></tr>';
   }
+
+  const tbody = document.getElementById('tbodyMesas');
+  if (!tbody) return;
+  tbody.innerHTML = mesas.map(renderFila).join('');
 
   // Listeners por fila
   tbody.querySelectorAll('tr').forEach(tr => {
@@ -137,7 +122,7 @@ async function renderTabla(){
     const btnCancelar = tr.querySelector('.btn-cancelar');
     if (btnGuardar && btnCancelar){
       btnGuardar.addEventListener('click', async () => {
-        const id = tr.dataset.id; // id en la BBDD probablemente sea string (ObjectId)
+        const id = tr.dataset.id;
         const select = tr.querySelector('select');
         const nuevo = select.value;
 
@@ -150,13 +135,10 @@ async function renderTabla(){
           if (!res.ok) throw new Error('Error al actualizar mesa');
 
           const resp = await res.json();
-          // Actualizar en memoria (si existe la propiedad _id o id)
           const item = mesas.find(m => (m._id || m.id) == id);
           if (item) item.estado = nuevo;
-          // refrescar solo la vista del badge
           view.innerHTML = badgeEstado(nuevo);
 
-          // salir del modo edición
           view.classList.remove('hidden');
           edit.classList.add('hidden');
           accionesEdit.classList.add('hidden');

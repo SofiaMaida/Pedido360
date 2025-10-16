@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administrador - Pedido360</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial; }
+    .card-hover:hover { transform: translateY(-5px); transition: transform 0.2s ease-in-out; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200"
+
+  <!-- Header (idéntico al del mesero) -->
+  <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="flex items-center gap-3">
+      <span class="text-3xl md:text-4xl select-none">🍽️</span>
+      <p class="text-white text-xl tracking-wide font-bold">Pedido360</p>
+    </div>
+
+    <!-- Menú de usuario -->
+    <div class="relative" id="userMenu">
+      <button id="userMenuButton"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/10 transition"
+              aria-haspopup="menu" aria-expanded="false">
+        <span id="userAvatar"
+              class="h-9 w-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center">
+          AD
+        </span>
+        <span id="userName" class="hidden sm:inline font-medium">Administrador</span>
+        <!-- Flecha -->
+        <svg id="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+             class="h-4 w-4 transition-transform" fill="currentColor">
+          <path fill-rule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <!-- Dropdown -->
+      <div id="userDropdown"
+           class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 hidden z-20">
+        <a href="/perfil/perfil.html"
+           class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">Mi perfil</a>
+        <button id="logoutBtn"
+                class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container mx-auto px-4 py-8 pt-24">
+    <!-- Mensaje de bienvenida -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+      <h1 class="text-3xl font-bold text-center text-purple-800 p-6 rounded-xl">
+        ¡Bienvenido al sistema de pedidos!
+      </h1>
+      <p class="text-gray-600">Supervisa tu restaurante de un vistazo: gestiona miembros del equipo, pedidos, menú y mesas activas en tiempo real.</p>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="mb-8">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Acciones rápidas</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="pedidos.html" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl card-hover">
+          <div class="flex justify-between items-center">
+            <span class="text-indigo-600 font-semibold">Ver pedidos</span>
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </a>
+        <a href="mesas.html" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl card-hover">
+          <div class="flex justify-between items-center">
+            <span class="text-emerald-600 font-semibold">Gestionar mesas</span>
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </a>
+        <a href="menu.html" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl card-hover">
+          <div class="flex justify-between items-center">
+            <span class="text-purple-600 font-semibold">Gestionar usuarios</span>
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Miembros -->
+      <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+        <div class="flex flex-col items-center">
+          <span class="text-2xl">👥</span>
+          <h4 class="text-gray-500 mt-2">MIEMBROS</h4>
+          <p id="totalMiembros" class="text-4xl font-bold text-indigo-600 mt-2">24</p>
+        </div>
+      </div>
+
+      <!-- Pedidos Hoy -->
+      <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+        <div class="flex flex-col items-center">
+          <span class="text-2xl">🍽️</span>
+          <h4 class="text-gray-500 mt-2">PEDIDOS HOY</h4>
+          <p id="totalPedidos" class="text-4xl font-bold text-amber-500 mt-2">12</p>
+        </div>
+      </div>
+
+      <!-- Mesas Activas -->
+      <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+        <div class="flex flex-col items-center">
+          <span class="text-2xl">✅</span>
+          <h4 class="text-gray-500 mt-2">MESAS ACTIVAS</h4>
+          <p id="mesasActivas" class="text-4xl font-bold text-emerald-500 mt-2">8</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="fixed bottom-0 w-full bg-white border-t border-gray-200 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <p class="text-gray-600 text-sm">© Pedido360. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Toggle simple del dropdown (igual al mesero) -->
+  <script>
+    (function () {
+      const btn = document.getElementById('userMenuButton');
+      const dd  = document.getElementById('userDropdown');
+      const chev = document.getElementById('chevron');
+      if (btn && dd) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dd.classList.toggle('hidden');
+          const open = !dd.classList.contains('hidden');
+          btn.setAttribute('aria-expanded', String(open));
+          chev?.classList.toggle('rotate-180', open);
+        });
+        document.addEventListener('click', () => {
+          if (!dd.classList.contains('hidden')) {
+            dd.classList.add('hidden');
+            btn.setAttribute('aria-expanded', 'false');
+            chev?.classList.remove('rotate-180');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <script src="admin.js"></script>
+</body>
+</html>

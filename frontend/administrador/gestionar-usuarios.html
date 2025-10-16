@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administración de usuarios | Pedido360</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-[Inter]">
+    <!-- Barra superior (estética como nuevo-pedido) -->
+    <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl md:text-4xl select-none">🍽️</span>
+        <p class="text-white text-xl tracking-wide font-bold">Pedido360</p>
+      </div>
+
+      <!-- Menú de usuario similar a nuevo-pedido -->
+      <div class="relative" id="userMenu">
+        <button id="userMenuButton" class="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-white/10 transition" aria-haspopup="menu" aria-expanded="false">
+          <span id="userAvatar" class="h-9 w-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center">BL</span>
+          <span id="userName" class="font-medium">Brenda Lopez</span>
+          <svg id="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="h-4 w-4 transition-transform" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div id="userDropdown" class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 hidden z-30">
+          <a href="/perfil/perfil.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">Mi perfil</a>
+          <button id="logoutBtn" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 mt-32">
+    <section class="mt-21 mb-10">
+        <nav class="text-sm text-purple-600 mb-4">
+            <a href="#" class="hover:underline">inicio</a>
+            <span class="mx-2 text-gray-300">/</span>
+            <span class="text-gray-700 font-medium">Gestión de usuarios</span>
+        </nav>
+
+        <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-gray-100">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-purple-900">Gestión de usuarios</h1>
+            <p class="text-gray-500 mt-3 max-w-2xl">
+                Administra a tu equipo en un solo lugar: crea, visualiza y elimina administradores, mozos y cocineros.
+            </p>
+        </div>
+    </section>
+
+      <section class="grid gap-6 md:grid-cols-4 mb-12">
+        <article class="bg-white rounded-xl shadow-md p-5 border border-purple-50">
+          <h2 class="text-sm uppercase tracking-wide text-purple-500 font-semibold">Total</h2>
+          <p class="text-3xl font-bold text-purple-900 mt-2" id="totalUsuarios">-</p>
+          <p class="text-sm text-gray-500 mt-1">Usuarios registrados</p>
+        </article>
+        <article class="bg-white rounded-xl shadow-md p-5 border border-purple-50">
+          <h2 class="text-sm uppercase tracking-wide text-purple-500 font-semibold">Administradores</h2>
+          <p class="text-3xl font-bold text-purple-900 mt-2" id="totalAdmins">-</p>
+          <p class="text-sm text-gray-500 mt-1">Usuarios con rol admin</p>
+        </article>
+        <article class="bg-white rounded-xl shadow-md p-5 border border-purple-50">
+          <h2 class="text-sm uppercase tracking-wide text-purple-500 font-semibold">Mozos</h2>
+          <p class="text-3xl font-bold text-purple-900 mt-2" id="totalMozos">-</p>
+          <p class="text-sm text-gray-500 mt-1">Usuarios con rol mesero</p>
+        </article>
+        <article class="bg-white rounded-xl shadow-md p-5 border border-purple-50">
+          <h2 class="text-sm uppercase tracking-wide text-purple-500 font-semibold">Cocineros</h2>
+          <p class="text-3xl font-bold text-purple-900 mt-2" id="totalCocineros">-</p>
+          <p class="text-sm text-gray-500 mt-1">Usuarios con rol cocinero</p>
+        </article>
+      </section>
+
+      <section class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-gray-100 mb-12">
+        <div id="feedback" class="hidden"></div>
+  <h2 class="text-2xl font-semibold text-purple-900 mb-6 text-center sm:text-left">Agregar nuevo usuario</h2>
+        <form id="formUsuario" class="grid gap-6 md:grid-cols-2">
+          <div class="md:col-span-1">
+            <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre completo</label>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              placeholder="Ej. Ana Torres"
+              class="mt-1 w-full rounded-lg border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+              required
+            />
+          </div>
+          <div class="md:col-span-1">
+            <label for="correo" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+            <input
+              type="email"
+              id="correo"
+              name="correo"
+              placeholder="nombre@empresa.com"
+              class="mt-1 w-full rounded-lg border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+              required
+            />
+          </div>
+          <div class="md:col-span-1">
+            <label for="contra" class="block text-sm font-medium text-gray-700">Contraseña temporal</label>
+            <input
+              type="password"
+              id="contra"
+              name="contra"
+              minlength="4"
+              placeholder="Ingresa una contraseña"
+              class="mt-1 w-full rounded-lg border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+              required
+            />
+          </div>
+          <div class="md:col-span-1">
+            <label for="rol" class="block text-sm font-medium text-gray-700">Rol</label>
+            <select
+              id="rol"
+              name="rol"
+              class="mt-1 w-full rounded-lg border-gray-300 focus:border-purple-400 focus:ring-purple-400"
+              required
+            >
+              <option value="mesero">Mozo</option>
+              <option value="cocinero">Cocinero</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+            <div class="md:col-span-2 flex justify-center sm:justify-end gap-3">
+            <button
+              type="reset"
+              class="px-5 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+            >
+              Limpiar
+            </button>
+            <button
+              type="submit"
+              id="btnGuardarUsuario"
+                class="px-6 py-2 rounded-lg bg-purple-600 text-white font-semibold shadow hover:bg-purple-700 transition"
+            >
+              Guardar usuario
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 class="text-2xl font-semibold text-purple-900">Usuarios registrados</h2>
+          <p class="text-sm text-gray-500" id="estadoUsuarios">Actualizado hace unos segundos</p>
+        </div>
+        <div class="overflow-x-auto border-t border-gray-100">
+          <table class="min-w-full divide-y divide-gray-200" aria-describedby="estadoUsuarios">
+            <thead class="bg-purple-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-purple-900">Nombre</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-purple-900">Rol</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-purple-900">Correo</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-purple-900">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="usuariosTableBody" class="divide-y divide-gray-100">
+              <tr>
+                <td colspan="4" class="px-6 py-6 text-center text-sm text-gray-500">
+                  Cargando usuarios...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-purple-100 bg-white/90 backdrop-blur py-4 mt-12">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
+        <span>&copy; Pedido360</span>
+        <a href="../login/login.html" class="underline hover:text-purple-700">Cerrar sesión</a>
+      </div>
+    </footer>
+
+    <script src="./admin.js"></script>
+    <script src="./gestionar-usuarios.js"></script>
+  </body>
+</html>

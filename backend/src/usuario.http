@@ -13,9 +13,9 @@ POST {{api}}/usuarios
 Content-Type: application/json
 
 {
-  "nombre": "Sofia Perez",
-  "correo": "sSofia.perez@example.com",
-  "rol": "mesero",
+  "nombre": "Super Admin",
+  "correo": "Aadmin@example.com",
+  "rol": "admin",
   "contra": "123456"
 }
 

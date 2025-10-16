@@ -27,6 +27,8 @@ console.log("Respuesta completa del login:", data);
      if (usuario.rol === 'mesero') {
 
         window.location.href = '../mesero/mesero.html';
+      } else if (usuario.rol === 'admin') {
+        window.location.href = '../administrador/admin.html';
       } else {
         alert(`¡Login exitoso! Rol detectado: ${usuario.rol}`);
         // Podés redirigir a otra página según el rol:

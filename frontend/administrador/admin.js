@@ -5,10 +5,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupUserMenu() {
-    const userMenuBtn = document.getElementById('userMenuBtn');
-    if (userMenuBtn) {
-        userMenuBtn.addEventListener('click', () => {
-            // Implementar menú desplegable si es necesario
+    const userMenu = document.getElementById('userMenu');
+    const userMenuBtn = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+    const userName = document.getElementById('userName');
+    const userAvatar = document.getElementById('userAvatar');
+
+    // Mostrar nombre desde localStorage
+    const nombre = localStorage.getItem('usuarioNombre') || 'Usuario Invitado';
+    if (userName) {
+        userName.textContent = nombre;
+        userName.classList.remove('hidden');
+    }
+    if (userAvatar) {
+        userAvatar.textContent = nombre.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    }
+
+    if (userMenuBtn && userDropdown) {
+        userMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+            const isHidden = userDropdown.classList.contains('hidden');
+            userMenuBtn.setAttribute('aria-expanded', String(!isHidden));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (userMenu && !userMenu.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+                userMenuBtn.setAttribute('aria-expanded', 'false');
+            }
         });
     }
 }
@@ -36,10 +61,12 @@ async function cargarEstadisticas() {
 }
 
 function setupCerrarSesion() {
-    const btnCerrarSesion = document.getElementById('cerrarSesion');
-    if (btnCerrarSesion) {
-        btnCerrarSesion.addEventListener('click', () => {
-            localStorage.clear();
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('usuarioNombre');
+            localStorage.removeItem('usuarioId');
+            sessionStorage.clear();
             window.location.href = '../login/login.html';
         });
     }

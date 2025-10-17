@@ -1,79 +1,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Pedido360</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
 </head>
 <body>
-    <div class="bg-[url('../images/fondo.jpg')] bg-cover bg-center h-screen">
-    <div class="bg-blue-500 text-white fixed top-0 left-0 w-full flex justify-between items-center p-4">
-        <div flex items-center>
-            <img src="../images/logo.png" class="h-9 w-9">
-            <p class="text-black font-bold text-lg ml-2">Pedido360</p>
-        </div>  
-        <nav>
-        <a href="../inicio/inicio.html" class="text-white no-underline mx-2">Inicio</a>
-        <a href="./pedidos/pedidos.html" class="text-white no-underline mx-2">Pedidos</a>
-        <a href="./menu/menu.html" class="text-white no-underline mx-2">Menú</a>
-        <a href="./mesas/mesas.html" class="text-white no-underline mx-2">Mesas</a>
-        <a href="./reportes/reportes.html" class="text-white no-underline mx-2">Reportes</a>
-        </nav>
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pb-24">
+    <div class="gradient-bg text-white fixed top-0 left-0 w-full py-4 shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="../images/logo.png" class="h-9 w-9">
+                <p class="font-bold text-lg ml-2">Pedido360</p>
+                <img src="../images/logo.png" class="h-8 w-8 ml-2" alt="Logo">
+            </div>
+            <nav class="text-sm">
+                <a href="../inicio.html" class="text-white no-underline mx-2">Inicio</a>
+                <a href="../pedidos/pedidos.html" class="text-white no-underline mx-2">Pedidos</a>
+                <a href="../menu/menu.html" class="text-white no-underline mx-2">Menú</a>
+                <a href="../mesas/mesas.html" class="text-white no-underline mx-2">Mesas</a>
+                <a href="../reportes/reportes.html" class="text-white no-underline mx-2">Reportes</a>
+            </nav>
+        </div>
     </div>
-    <div class="mt-16 mx-12">
-        <h1 class="text-left text-xl">Bienvenido, cocina</h1>
-        <h4 class="text-left text-gray-900 mt-4">Gestiona los pedidos de cocina en tiempo real</h4>
+    <div class="mt-24 max-w-6xl mx-auto px-4 pt-4">
+        <section class="mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-center">
+                    <h1 id="cocinaTitle" class="text-3xl font-bold text-center text-purple-800">¡Bienvenido a cocina!</h1>
+                    <button type="button" aria-label="Leer título" onclick="ttsSpeakById('cocinaTitle')" class="ml-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100">🔊</button>
+                </div>
+                <div class="mt-2 flex items-center justify-center">
+                    <p id="cocinaSubtitle" class="text-center text-gray-600">Gestiona los pedidos de cocina en tiempo real</p>
+                    <button type="button" aria-label="Leer subtítulo" onclick="ttsSpeakById('cocinaSubtitle')" class="ml-3 inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200">🔊</button>
+                </div>
+            </div>
+        </section>
 
-        <div class="flex justify-between items-center mt-8">
-            <div class="bg-white shadow-md w-4/5 m-5 p-5 rounded-lg">
-                <div class="card-icon">🕒</div> <div class="card-title">Pendientes</div>
-                <div class="card-number">0</div>
+        <div class="mt-6 bg-white/80 backdrop-blur shadow rounded-lg p-3 flex flex-wrap gap-2 items-center justify-center">
+            <div class="text-sm text-gray-700 mr-2">Filtrar:</div>
+            <button id="filterAll" class="px-4 py-1.5 rounded-full border bg-gray-700 text-white">Todos</button>
+            <button id="filterPendiente" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Pendiente</button>
+            <button id="filterPreparando" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Preparando</button>
+            <button id="filterListo" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Listo</button>
+            <button id="refreshBtn" class="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Refrescar</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-8">
+            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+                <div class="text-2xl">🕒</div>
+                <div class="card-title">Pendientes</div>
+                <div class="card-number text-2xl font-semibold" id="contadorPendientes">0</div>
             </div>
-            <div class="bg-white shadow-md w-4/5 m-5 p-5 rounded-lg">
-                <div class="card-icon">🔔</div> <div class="card-title">En preparación</div>
-                <div class="card-number">4</div>
+            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+                <div class="text-2xl">🔔</div>
+                <div class="card-title">En preparación</div>
+                <div class="card-number text-2xl font-semibold" id="contadorPreparacion">0</div>
             </div>
-            <div class="bg-white shadow-md w-4/5 m-5 p-5 rounded-lg">
-                <div class="card-icon">✅</div> <div class="card-title">Listos</div>
-                <div class="card-number">7</div>
+            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+                <div class="text-2xl">✅</div>
+                <div class="card-title">Listos</div>
+                <div class="card-number text-2xl font-semibold" id="contadorListos">0</div>
             </div>
         </div>
 
         <div class="cola">
-            <h2 class="text-left text-gray-900 mt-4">Cola de pedidos</h2>
-            <div class="bg-white flex justify-between items-center shadow-md m-5 p-5 rounded-lg">
-                <div class="orden">
-                    <div class="order-header">
-                        <span class="order-id">#1088</span>
-                        <span class="order-table">Mesa 8</span>
-                        <span class="order-time">12:25</span>
-                        <span class="priority-tag">Prioridad Alta</span>
-                    </div>
-                    <div class="dish-list">
-                        <div class="dish-item">
-                            <span class="dish-quantity">2</span>
-                            <span class="dish-name">Ensalada César</span>
-                            <span class="dish-status status-ready">Listo</span>
-                        </div>
-                        <div class="dish-item">
-                            <span class="dish-quantity">1</span>
-                            <span class="dish-name">Pasta Carbonara</span>
-                            <span class="dish-status status-preparing">Preparando</span>
-                            <span class="status-icon">✔</span> </div>
-                         <div class="dish-item">
-                            <span class="dish-quantity">1</span>
-                            <span class="dish-name">Sin tocino</span>
-                            <span class="dish-status status-in-progress">En proceso</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
+            <h2 class="text-left text-gray-900 mt-6">Cola de pedidos</h2>
+            <div id="listaPedidos" class="mt-4 space-y-4"></div>
         </div>
+    </div>
 
-    <div class="bg-blue-500 text-white fixed bottom-0 left-0 w-full flex justify-between items-center p-2">
-    <nav>
-        <a href="../login/login.html" class="text-white no-underline mx-2">Cerrar Cesión</a>
-    </nav>
+    <footer class="bg-gray-800 text-white fixed bottom-0 left-0 w-full py-3">
+        <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
+            <p class="text-sm text-gray-300">🍽️ Pedido360</p>
+            <nav>
+                <a href="../login/login.html" class="text-white no-underline mx-2">Cerrar Sesion</a>
+            </nav>
+        </div>
+    </footer>
     </div>
-    </div>
+<script src="../tts.js"></script>
+<script src="./cocina.js"></script>
 </body>

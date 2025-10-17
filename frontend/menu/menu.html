@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -41,12 +41,14 @@
           <span class="font-semibold text-base">Ir al inicio</span>
         </a>
         <div class="text-center">
-          <h1 class="text-5xl md:text-6xl font-bold mb-4">
-            🍽️ Pedido360
-          </h1>
-          <p class="text-xl md:text-2xl text-gray-200 mb-6">
-            Menú Digital
-          </p>
+          <div class="flex items-center justify-center gap-3">
+            <h1 id="menuTitle" class="text-5xl md:text-6xl font-bold mb-4">🍽️ Pedido360</h1>
+            <button type="button" aria-label="Leer título" onclick="ttsSpeakById('menuTitle')" class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/20 text-white hover:bg-white/30">🔊</button>
+          </div>
+          <div class="flex items-center justify-center gap-2">
+            <p id="menuSubtitle" class="text-xl md:text-2xl text-gray-200 mb-6">Menú Digital</p>
+            <button type="button" aria-label="Leer subtítulo" onclick="ttsSpeakById('menuSubtitle')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30">🔊</button>
+          </div>
         </div>
       </div>
     </header>
@@ -55,7 +57,10 @@
 <main class="max-w-7xl mx-auto px-6 py-12">
   <!-- Filtros -->
   <div class="text-center mb-12">
-    <h2 class="text-3xl font-bold text-gray-800 mb-8">Explorá nuestro menú</h2>
+    <div class="flex items-center justify-center gap-2">
+      <h2 id="menuSectionTitle" class="text-3xl font-bold text-gray-800 mb-8">Explorá nuestro menú</h2>
+      <button type="button" aria-label="Leer sección" onclick="ttsSpeakById('menuSectionTitle')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200">🔊</button>
+    </div>
     <div id="filters" class="flex justify-center flex-wrap gap-4 mb-8"></div>
   </div>
 
@@ -78,6 +83,7 @@
 </footer>
 
 
+<script src="../tts.js"></script>
 <script src="menu.js"></script>
 
   </body>

@@ -8,6 +8,7 @@ import {
   obtenerPedidoRepository
 } from "../repository/pedido.js";
 import QRCode from 'qrcode';
+import { public_config } from '../config.js';
 
 const calcTotal = (items = []) =>
   items.reduce(
@@ -46,8 +47,9 @@ export const agregarPedidoService = async (pedido) => {
 
     const pedidoNuevo = await agregarPedidosRepository(pedido);
 
-    // QR de seguimiento
-    const urlSeguimiento = `https://tusitio.com/seguimiento/${pedidoNuevo._id}`;
+    // QR de seguimiento con query-param id apuntando a la pantalla existente
+    const base = public_config?.baseUrl || 'http://127.0.0.1:5500/frontend';
+    const urlSeguimiento = `${base}/seguimiento/seguimiento.html?id=${pedidoNuevo._id}`;
     const qrCode = await QRCode.toDataURL(urlSeguimiento);
 
     const plain =
@@ -55,7 +57,7 @@ export const agregarPedidoService = async (pedido) => {
         ? pedidoNuevo.toObject()
         : pedidoNuevo;
 
-    return { ...plain, qrCode };
+    return { ...plain, qrCode, urlSeguimiento };
   } catch (error) {
     console.error("Error en el Servicio:", error);
     throw new Error("Error al agregar el pedido");

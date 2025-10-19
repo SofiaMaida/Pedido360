@@ -13,7 +13,7 @@ POST {{api}}/usuarios
 Content-Type: application/json
 
 {
-  "nombre": "Super Admin",
+  "nombre": "Damian ",
   "correo": "Aadmin@example.com",
   "rol": "admin",
   "contra": "123456"

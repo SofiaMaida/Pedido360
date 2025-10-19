@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCerrarSesion();
 });
 
+// Base de la API según entorno
+const API_BASE =
+  location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:3000'
+    : 'https://api.pedido360.com.ar';
+
 function setupUserMenu() {
     const userMenu = document.getElementById('userMenu');
     const userMenuBtn = document.getElementById('userMenuButton');
@@ -41,18 +47,26 @@ function setupUserMenu() {
 async function cargarEstadisticas() {
     try {
         // Cargar número de miembros
-        const resMiembros = await fetch('http://localhost:3000/usuarios');
+        const resMiembros = await fetch(`${API_BASE}/usuarios`);
         const miembros = await resMiembros.json();
         document.getElementById('totalMiembros').textContent = miembros.length;
 
-        // Cargar pedidos de hoy
-        const hoy = new Date().toISOString().split('T')[0];
-        const resPedidos = await fetch(`http://localhost:3000/pedido/fecha/${hoy}`);
-        const pedidos = await resPedidos.json();
-        document.getElementById('totalPedidos').textContent = pedidos.length;
+        // Cargar pedidos de hoy (no hay endpoint por fecha -> filtramos cliente)
+        const resPedidos = await fetch(`${API_BASE}/pedido`);
+        let pedidos = await resPedidos.json();
+        if (!Array.isArray(pedidos)) pedidos = [];
+        const hoyLocal = new Date();
+        const esMismoDia = (f) => {
+          const d = new Date(f);
+          return d.getFullYear() === hoyLocal.getFullYear() &&
+                 d.getMonth() === hoyLocal.getMonth() &&
+                 d.getDate() === hoyLocal.getDate();
+        };
+        const pedidosHoy = pedidos.filter(p => p.createdAt && esMismoDia(p.createdAt));
+        document.getElementById('totalPedidos').textContent = pedidosHoy.length;
 
-        // Cargar mesas activas
-        const resMesas = await fetch('http://localhost:3000/mesas/activas');
+        // Cargar mesas ocupadas
+        const resMesas = await fetch(`${API_BASE}/mesas/estado/ocupada`);
         const mesas = await resMesas.json();
         document.getElementById('mesasActivas').textContent = mesas.length;
     } catch (error) {

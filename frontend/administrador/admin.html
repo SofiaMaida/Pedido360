@@ -11,7 +11,7 @@
     .card-hover:hover { transform: translateY(-5px); transition: transform 0.2s ease-in-out; }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 font-[Inter]">
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 font-[Inter]">
 
   <!-- Header (idéntico al del mesero) -->
   <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10"
@@ -54,7 +54,7 @@
   </header>
 
   <!-- Contenido principal -->
-  <main class="container mx-auto px-4 py-8 pt-24">
+  <main class="container mx-auto px-4 py-8 pt-24 flex-1">
     <!-- Mensaje de bienvenida -->
     <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
       <h1 class="text-3xl font-bold text-center text-purple-800 p-6 rounded-xl">
@@ -67,7 +67,7 @@
     <div class="mb-8">
       <h3 class="text-xl font-semibold text-gray-800 mb-4">Acciones rápidas</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="pedidos.html" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl card-hover">
+        <a href="./pedidos-admin.html" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl card-hover">
           <div class="flex justify-between items-center">
             <span class="text-indigo-600 font-semibold">Ver pedidos</span>
             <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@
         <div class="flex flex-col items-center">
           <span class="text-2xl">👥</span>
           <h4 class="text-gray-500 mt-2">MIEMBROS</h4>
-          <p id="totalMiembros" class="text-4xl font-bold text-indigo-600 mt-2">24</p>
+          <p id="totalMiembros" class="text-4xl font-bold text-indigo-600 mt-2">-</p>
         </div>
       </div>
 
@@ -110,7 +110,7 @@
         <div class="flex flex-col items-center">
           <span class="text-2xl">🍽️</span>
           <h4 class="text-gray-500 mt-2">PEDIDOS HOY</h4>
-          <p id="totalPedidos" class="text-4xl font-bold text-amber-500 mt-2">12</p>
+          <p id="totalPedidos" class="text-4xl font-bold text-amber-500 mt-2">-</p>
         </div>
       </div>
 
@@ -118,44 +118,17 @@
       <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
         <div class="flex flex-col items-center">
           <span class="text-2xl">✅</span>
-          <h4 class="text-gray-500 mt-2">MESAS ACTIVAS</h4>
-          <p id="mesasActivas" class="text-4xl font-bold text-emerald-500 mt-2">8</p>
+          <h4 class="text-gray-500 mt-2">MESAS OCUPADAS</h4>
+          <p id="mesasActivas" class="text-4xl font-bold text-emerald-500 mt-2">-</p>
         </div>
       </div>
     </div>
   </main>
-
-  <!-- Footer -->
-  <footer class="w-full bg-white border-t border-gray-200 p-4 mt-12">
-    <div class="container mx-auto flex justify-between items-center">
-      <p class="text-gray-600 text-sm">© Pedido360. Todos los derechos reservados.</p>
-    </div>
-  </footer>
-
-  <!-- Toggle simple del dropdown (igual al mesero) -->
-  <script>
-    (function () {
-      const btn = document.getElementById('userMenuButton');
-      const dd  = document.getElementById('userDropdown');
-      const chev = document.getElementById('chevron');
-      if (btn && dd) {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          dd.classList.toggle('hidden');
-          const open = !dd.classList.contains('hidden');
-          btn.setAttribute('aria-expanded', String(open));
-          chev?.classList.toggle('rotate-180', open);
-        });
-        document.addEventListener('click', () => {
-          if (!dd.classList.contains('hidden')) {
-            dd.classList.add('hidden');
-            btn.setAttribute('aria-expanded', 'false');
-            chev?.classList.remove('rotate-180');
-          }
-        });
-      }
-    })();
-  </script>
+  <footer class="border-t border-purple-100 bg-white/90 backdrop-blur py-4">
+      <div class="max-w-6xl mx-auto px-6 md:px-10 lg:px-16 xl:px-24 text-xs text-gray-500">
+        © Pedido360. Todos los derechos reservados.
+      </div>
+    </footer>
 
   <script src="admin.js"></script>
 </body>

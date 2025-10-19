@@ -18,5 +18,9 @@ const express_config = {
 
 
 export {db_config, express_config};
+// URL pública base para construir enlaces (por ejemplo, para QR)
+export const public_config = {
+  baseUrl: process.env.PUBLIC_BASE_URL || 'http://127.0.0.1:5500/frontend'
+};
 
 

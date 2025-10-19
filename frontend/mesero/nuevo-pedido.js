@@ -1,4 +1,7 @@
-const API_BASE = 'http://localhost:3000';
+const API_BASE =
+  (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:3000'
+    : 'https://api.pedido360.com.ar';
 
 const selectors = {
   mesa: document.getElementById('mesa'),
@@ -409,3 +412,85 @@ selectors.addItemBtn?.addEventListener('click', () => createItemRow());
 selectors.form?.addEventListener('submit', submitForm);
 
 document.addEventListener('DOMContentLoaded', init);
+
+// --- Modal QR helpers e interceptación de fetch para POST /pedido ---
+(function(){
+  function ensureQrModal() {
+    let modal = document.getElementById('modalQR');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'modalQR';
+      modal.className = 'hidden fixed inset-0 z-50';
+      modal.innerHTML = `
+        <div class="absolute inset-0 bg-black/40" data-close="1"></div>
+        <div class="relative mx-auto mt-24 w-11/12 sm:w-[480px]">
+          <div class="bg-white rounded-2xl shadow-xl border border-purple-100 p-6">
+            <div class="flex items-start justify-between mb-4">
+              <h3 class="text-lg font-bold text-purple-900">Pedido creado</h3>
+              <button id="cerrarModalQR" class="w-9 h-9 rounded-full hover:bg-gray-100">&times;</button>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">Escaneá el QR para ver el seguimiento del pedido en tiempo real.</p>
+            <div class="flex flex-col items-center gap-3">
+              <img id="qrImagen" alt="QR seguimiento" class="w-48 h-48 object-contain" />
+              <a id="qrEnlace" href="#" target="_blank" rel="noopener" class="text-xs text-purple-700 break-all hover:underline"></a>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+              <button id="abrirSeguimiento" type="button" class="px-4 py-2 rounded-full bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700">Abrir seguimiento</button>
+              <button id="okModalQR" class="px-4 py-2 rounded-full border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50">Listo</button>
+            </div>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      const close = () => modal.classList.add('hidden');
+      modal.addEventListener('click', (e) => { if (e.target.dataset.close) close(); });
+      modal.querySelector('#cerrarModalQR')?.addEventListener('click', close);
+      modal.querySelector('#okModalQR')?.addEventListener('click', close);
+    }
+    return modal;
+  }
+
+  function showQrModal(pedido){
+    const modal = ensureQrModal();
+    const img = document.getElementById('qrImagen');
+    const link = document.getElementById('qrEnlace');
+    const abrir = document.getElementById('abrirSeguimiento');
+    if (img && pedido.qrCode) img.src = pedido.qrCode;
+    // Determinar URL destino robustamente
+    const idPedido = pedido?.id || pedido?._id || '';
+    const providedUrl = typeof pedido?.urlSeguimiento === 'string' ? pedido.urlSeguimiento : '';
+    const isHttp = (u) => /^https?:\/\//i.test(String(u||''));
+    const fallbackBase = 'http://127.0.0.1:5500/frontend/seguimiento/seguimiento.html';
+    const url = isHttp(providedUrl)
+      ? providedUrl
+      : (idPedido ? `${fallbackBase}?id=${encodeURIComponent(idPedido)}` : '');
+
+    if (link && url) { link.href = url; link.textContent = url; }
+    if (abrir) {
+      abrir.onclick = (e) => {
+        e.preventDefault();
+        if (!url) return;
+        const w = window.open(url, '_blank', 'noopener');
+        if (!w) window.location.href = url;
+      };
+    }
+    modal.classList.remove('hidden');
+  }
+
+  const _fetch = window.fetch?.bind(window);
+  if (_fetch) {
+    window.fetch = async (...args) => {
+      const res = await _fetch(...args);
+      try {
+        const url = String(args[0] || '');
+        const method = String(args[1]?.method || 'GET').toUpperCase();
+        if (method === 'POST' && url.includes('/pedido')) {
+          const clone = res.clone();
+          const data = await clone.json().catch(()=>null);
+          const pedido = (data && (data.pedido || data)) || null;
+          if (pedido?.qrCode) showQrModal(pedido);
+        }
+      } catch (_) {}
+      return res;
+    };
+  }
+})();

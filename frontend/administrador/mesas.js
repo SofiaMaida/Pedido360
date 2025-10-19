@@ -1,6 +1,6 @@
 // ===== Identidad del usuario (opcional) =====
 const mozo = JSON.parse(localStorage.getItem('mozo') || '{}');
-const nombre = mozo.nombre || 'Mozo invitado';
+const nombre = localStorage.getItem('usuarioNombre') || mozo.nombre || 'Usuario Invitado';
 const userNameEl = document.getElementById('userName');
 const userAvatarEl = document.getElementById('userAvatar');
 userNameEl.textContent = nombre;
@@ -17,13 +17,19 @@ btn.addEventListener('click', e => {
   btn.setAttribute('aria-expanded', expanded);
   chevron.classList.toggle('rotate-180', expanded === 'true');
 });
-document.addEventListener('click', e => { if (!userMenu.contains(e.target)) { dd.classList.add('hidden'); chevron.classList.remove('rotate-180'); } });
+document.addEventListener('click', e => { if (userMenu && !userMenu.contains(e.target)) { dd.classList.add('hidden'); chevron.classList.remove('rotate-180'); } });
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('mozo'); sessionStorage.clear(); window.location.href = '/login/login.html';
+  localStorage.removeItem('usuarioNombre');
+  localStorage.removeItem('usuarioId');
+  sessionStorage.clear();
+  window.location.href = '../login/login.html';
 });
 
 // ===== Mesas: consumir API en lugar de data hardcodeada =====
-const API_BASE = 'http://localhost:3000';
+const API_BASE =
+  location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:3000'
+    : 'https://api.pedido360.com.ar';
 
 // Ajustado a los valores del modelo en backend: ['libre','ocupada','reservada','mantenimiento']
 const ESTADOS = [
@@ -34,6 +40,24 @@ const ESTADOS = [
 ];
 
 let mesas = [];
+
+function actualizarContadores() {
+  const total = mesas.length;
+  const libres = mesas.filter(m => m.estado === 'libre').length;
+  const ocupadas = mesas.filter(m => m.estado === 'ocupada').length;
+  const reservadas = mesas.filter(m => m.estado === 'reservada').length;
+  const mantenimiento = mesas.filter(m => m.estado === 'mantenimiento').length;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = String(val); };
+  set('totalMesas', total);
+  set('totalLibres', libres);
+  set('totalOcupadas', ocupadas);
+  set('totalReservadas', reservadas);
+  set('totalMantenimiento', mantenimiento);
+
+  const estado = document.getElementById('estadoMesas');
+  if (estado) estado.textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR');
+}
 
 // Helpers
 const estadoMeta = (v) => ESTADOS.find(e => e.value === v) || ESTADOS[0];
@@ -102,6 +126,8 @@ async function renderTabla(){
   if (!tbody) return;
   tbody.innerHTML = mesas.map(renderFila).join('');
 
+  actualizarContadores();
+
   // Listeners por fila
   tbody.querySelectorAll('tr').forEach(tr => {
     const btnEditar = tr.querySelector('.btn-editar');
@@ -143,6 +169,8 @@ async function renderTabla(){
           edit.classList.add('hidden');
           accionesEdit.classList.add('hidden');
           if (btnEditar) btnEditar.classList.remove('hidden');
+
+          actualizarContadores();
         } catch (err) {
           console.error('Error al guardar mesa:', err);
           alert('No se pudo actualizar la mesa. Intente de nuevo.');

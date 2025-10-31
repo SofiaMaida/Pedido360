@@ -9,13 +9,8 @@ import {
   obtenerPedidoService
 } from "../services/pedido.js";
 
-const formatearHora = (fecha) => {
-  const f = new Date(fecha);
-  return f.toLocaleTimeString('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
+// Devolvemos horas en ISO y dejamos que el cliente formatee según su zona
+const toISO = (fecha) => (fecha ? new Date(fecha).toISOString() : null);
 
 // Obtener un pedido por ID (para seguimiento)
 export const obtenerPedidoController = async (req, res) => {
@@ -38,11 +33,13 @@ export const obtenerPedidoController = async (req, res) => {
       estadoActual: pedido.estado,
       creadoEn: pedido.createdAt,
       total: pedido.total,
+      items: Array.isArray(pedido.items) ? pedido.items : [],
       horas: {
-        recibido: formatearHora (pedido.createdAt) || "--",
-        en_preparacion: pedido.estado === 'preparando' ? formatearHora(pedido.updatedAt) : "--",
-        listo:  pedido.estado === 'listo' ? formatearHora(pedido.updatedAt) : "--",
-        entregado:  pedido.estado === 'entregado' ? formatearHora(pedido.updatedAt) : "--"
+        recibido: toISO(pedido.createdAt),
+        en_preparacion: pedido.estado === 'preparando' ? toISO(pedido.updatedAt) : null,
+        en_10_min: pedido.estado === 'en 10 min' ? toISO(pedido.updatedAt) : null,
+        listo: pedido.estado === 'listo para servir' ? toISO(pedido.updatedAt) : null,
+        entregado: pedido.estado === 'entregado' ? toISO(pedido.updatedAt) : null
       }
     });
 

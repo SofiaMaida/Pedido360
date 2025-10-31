@@ -48,8 +48,13 @@ export const agregarPedidoService = async (pedido) => {
     const pedidoNuevo = await agregarPedidosRepository(pedido);
 
     // QR de seguimiento con query-param id apuntando a la pantalla existente
-    const base = public_config?.baseUrl || 'http://127.0.0.1:5500/frontend';
-    const urlSeguimiento = `${base}/seguimiento/seguimiento.html?id=${pedidoNuevo._id}`;
+    // Aseguramos que la ruta incluya "/frontend" exactamente una vez
+    const rawBase = public_config?.baseUrl || 'http://127.0.0.1:5500';
+    const normalizedBase = String(rawBase).replace(/\/+$/, '');
+    const baseWithFrontend = normalizedBase.endsWith('/frontend')
+      ? normalizedBase
+      : `${normalizedBase}/frontend`;
+    const urlSeguimiento = `${baseWithFrontend}/seguimiento/seguimiento.html?id=${pedidoNuevo._id}`;
     const qrCode = await QRCode.toDataURL(urlSeguimiento);
 
     const plain =

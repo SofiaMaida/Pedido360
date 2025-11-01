@@ -22,22 +22,7 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
   </style>
-  <script>
-    (function() {
-      try {
-        var desiredOrigin = 'https://pedido360-front.s3.us-east-1.amazonaws.com';
-        var desiredPath = '/frontend/seguimiento/seguimiento.html';
-        var params = new URLSearchParams(window.location.search || '');
-        var id = params.get('id');
-        var here = window.location.origin + window.location.pathname;
-        var target = desiredOrigin + desiredPath;
-        if (here !== target) {
-          var url = target + (id ? ('?id=' + encodeURIComponent(id)) : '');
-          window.location.replace(url);
-        }
-      } catch (e) { /* noop */ }
-    })();
-  </script>
+  <script src="../config.js"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col">
 
@@ -58,7 +43,7 @@
   </header>
 
   <!-- Seguimiento -->
-  <div class="max-w-4xl mx-auto px-6 py-8 space-y-8 flex-1">
+  <div class="max-w-6xl xl:max-w-7xl mx-auto px-6 py-8 space-y-8 flex-1">
 
     <!-- Buscador por ID -->
     <div id="search-panel" class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
@@ -74,7 +59,7 @@
         </div>
       </div>
 
-      <form id="search-form" class="mt-6 flex flex-col md:flex-row gap-4">
+      <form id="search-form" class="mt-6 grid grid-cols-1 md:grid-cols-12 items-center gap-4">
         <label for="search-input" class="sr-only">ID del pedido</label>
         <input
           id="search-input"
@@ -82,12 +67,12 @@
           type="text"
           inputmode="numeric"
           placeholder="Ej: 12345"
-          class="flex-1 rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-400 focus:outline-none"
+          class="w-full md:col-span-10 rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-400 focus:outline-none"
           autocomplete="off"
         />
         <button
           type="submit"
-          class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white font-semibold shadow-md hover:shadow-lg transition-shadow duration-300"
+          class="md:col-span-2 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white font-semibold shadow-md hover:shadow-lg transition-shadow duration-300"
         >
           <span>Buscar</span>
         </button>
@@ -98,20 +83,20 @@
       <div id="result-message" class="text-center text-sm text-gray-500"></div>
 
       <!-- Box de información del pedido -->
-      <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+      <div class="bg-white shadow-lg rounded-xl p-6 md:p-8 border border-gray-100">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-2xl font-bold text-gray-800">📋 Información del Pedido</h2>
           <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
             <span class="text-white font-bold text-lg">🍽️</span>
           </div>
         </div>
-        <div id="pedido-info" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="pedido-info" class="grid grid-cols-1 gap-5 md:gap-6">
           <!-- La información se cargará dinámicamente desde JavaScript -->
         </div>
       </div>
 
       <!-- Timeline del estado -->
-      <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+      <div class="bg-white shadow-lg rounded-xl p-6 md:p-8 border border-gray-100">
         <h3 class="text-xl font-semibold text-gray-800 mb-6 text-center">⏳ Estado actual del pedido</h3>
         <div id="timeline" class="relative border-l-4 border-gray-200 ml-6 space-y-6">
           <!-- El timeline se cargará dinámicamente desde JavaScript -->

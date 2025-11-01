@@ -1,3 +1,4 @@
+(() => {
 // ===== Identidad del usuario =====
 const nombre = localStorage.getItem('usuarioNombre') || 'Mesero invitado';
 const userNameEl = document.getElementById('userName');
@@ -17,7 +18,7 @@ btn.addEventListener('click', e => {
   chevron.classList.toggle('rotate-180', expanded === 'true');
 });
 document.addEventListener('click', e => { if (!userMenu.contains(e.target)) { dd.classList.add('hidden'); chevron.classList.remove('rotate-180'); } });
-document.getElementById('logoutBtn').addEventListener('click', () => {
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
   localStorage.removeItem('usuarioNombre');
   localStorage.removeItem('usuarioId');
   sessionStorage.clear();
@@ -25,7 +26,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 });
 
 // ===== Mesas: consumir API en lugar de data hardcodeada =====
-const API_BASE = 'http://localhost:3000';
+const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
 
 // Ajustado a los valores del modelo en backend: ['libre','ocupada','reservada','mantenimiento']
 const ESTADOS = [
@@ -180,3 +181,4 @@ async function renderTabla(){
 
 // Inicializar
 document.addEventListener('DOMContentLoaded', renderTabla);
+})();

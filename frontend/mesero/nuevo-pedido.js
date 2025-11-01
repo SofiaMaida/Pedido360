@@ -1,7 +1,4 @@
-const API_BASE =
-  (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-    ? 'http://127.0.0.1:3000'
-    : 'https://api.pedido360.com.ar';
+const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
 
 const selectors = {
   mesa: document.getElementById('mesa'),
@@ -459,7 +456,8 @@ document.addEventListener('DOMContentLoaded', init);
     const idPedido = pedido?.id || pedido?._id || '';
     const providedUrl = typeof pedido?.urlSeguimiento === 'string' ? pedido.urlSeguimiento : '';
     const isHttp = (u) => /^https?:\/\//i.test(String(u||''));
-    const fallbackBase = 'http://127.0.0.1:5500/frontend/seguimiento/seguimiento.html';
+    // Build fallback URL based on current origin to avoid mixed content
+    const fallbackBase = new URL('/frontend/seguimiento/seguimiento.html', window.location.origin).href;
     const url = isHttp(providedUrl)
       ? providedUrl
       : (idPedido ? `${fallbackBase}?id=${encodeURIComponent(idPedido)}` : '');

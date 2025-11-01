@@ -18,6 +18,9 @@ export async function connect() {
         console.log("DB MongoDB Conectada correctamente");
     }catch (error){
         console.log(error);
-        process.exit(1);
+        // No finalizar el proceso: permitir que el servidor siga respondiendo
+        // en entornos donde la DB pueda estar temporalmente inaccesible.
+        // Propaga el error para que el caller decida cómo manejarlo.
+        throw error;
     }
 }

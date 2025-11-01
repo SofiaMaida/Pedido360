@@ -1,4 +1,4 @@
-﻿const API = "http://127.0.0.1:3000";
+const API = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
 
 const CATEGORY_STYLES = {
   "Entradas": { icon: "🥗", gradient: "from-green-400 to-green-600" },

@@ -1,0 +1,1 @@
+window.API_BASE = 'https://hhjlmc50b2.execute-api.us-east-1.amazonaws.com';

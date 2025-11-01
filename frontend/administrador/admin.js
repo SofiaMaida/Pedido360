@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     setupUserMenu();
-    cargarEstadisticas();
+    if (document.getElementById('totalMiembros') || document.getElementById('totalPedidos') || document.getElementById('mesasActivas')) {
+        cargarEstadisticas();
+        setInterval(cargarEstadisticas, 60000);
+    }
     setupCerrarSesion();
 });
 
 // Base de la API según entorno
-const API_BASE =
-  location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-    ? 'http://127.0.0.1:3000'
-    : 'https://api.pedido360.com.ar';
+const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
 
 function setupUserMenu() {
     const userMenu = document.getElementById('userMenu');
@@ -46,10 +46,15 @@ function setupUserMenu() {
 
 async function cargarEstadisticas() {
     try {
+        const hasTargets = document.getElementById('totalMiembros') || document.getElementById('totalPedidos') || document.getElementById('mesasActivas');
+        if (!hasTargets) return;
         // Cargar número de miembros
-        const resMiembros = await fetch(`${API_BASE}/usuarios`);
-        const miembros = await resMiembros.json();
-        document.getElementById('totalMiembros').textContent = miembros.length;
+        const elMiembros = document.getElementById('totalMiembros');
+        if (elMiembros) {
+            const resMiembros = await fetch(`${API_BASE}/usuarios`);
+            const miembros = await resMiembros.json();
+            elMiembros.textContent = Array.isArray(miembros) ? miembros.length : 0;
+        }
 
         // Cargar pedidos de hoy (no hay endpoint por fecha -> filtramos cliente)
         const resPedidos = await fetch(`${API_BASE}/pedido`);
@@ -63,12 +68,18 @@ async function cargarEstadisticas() {
                  d.getDate() === hoyLocal.getDate();
         };
         const pedidosHoy = pedidos.filter(p => p.createdAt && esMismoDia(p.createdAt));
-        document.getElementById('totalPedidos').textContent = pedidosHoy.length;
+        const elPedidos = document.getElementById('totalPedidos');
+        if (elPedidos) {
+            elPedidos.textContent = pedidosHoy.length;
+        }
 
         // Cargar mesas ocupadas
-        const resMesas = await fetch(`${API_BASE}/mesas/estado/ocupada`);
-        const mesas = await resMesas.json();
-        document.getElementById('mesasActivas').textContent = mesas.length;
+        const elMesas = document.getElementById('mesasActivas');
+        if (elMesas) {
+            const resMesas = await fetch(`${API_BASE}/mesas/estado/ocupada`);
+            const mesas = await resMesas.json();
+            elMesas.textContent = Array.isArray(mesas) ? mesas.length : 0;
+        }
     } catch (error) {
         console.error('Error al cargar estadísticas:', error);
     }

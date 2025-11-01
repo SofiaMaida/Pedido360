@@ -1,5 +1,14 @@
+(() => {
 // Configuración básica
-const API_BASE = 'http://localhost:3000';
+const API_BASE = (typeof window !== 'undefined' && window.API_BASE)
+  ? window.API_BASE
+  : (localStorage.getItem('API_BASE') || 'http://localhost:3000');
+try {
+  if (typeof window !== 'undefined' && window.API_BASE && localStorage.getItem('API_BASE') !== window.API_BASE) {
+    localStorage.setItem('API_BASE', window.API_BASE);
+  }
+} catch (_) {}
+try { console.log('[cocina] API_BASE =', API_BASE); } catch (_) {}
 const ESTADOS = {
   pendiente: 'pendiente',
   preparando: 'preparando',
@@ -27,13 +36,15 @@ function formatoHora(fechaIso) {
 }
 
 async function apiGet(path) {
-  const res = await fetch(`${API_BASE}${path}`);
+  const url = `${API_BASE}${path}`;
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`GET ${path} -> ${res.status}`);
   return res.json();
 }
 
 async function apiPut(path, body) {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const url = `${API_BASE}${path}`;
+  const res = await fetch(url, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
@@ -43,7 +54,8 @@ async function apiPut(path, body) {
 }
 
 async function apiDelete(path) {
-  const res = await fetch(`${API_BASE}${path}`, { method: 'DELETE' });
+  const url = `${API_BASE}${path}`;
+  const res = await fetch(url, { method: 'DELETE' });
   if (!res.ok) throw new Error(`DELETE ${path} -> ${res.status}`);
   return res.json().catch(() => ({}));
 }
@@ -335,3 +347,6 @@ function wireFilters() {
 
   syncFilterButtons();
 }
+
+
+})();

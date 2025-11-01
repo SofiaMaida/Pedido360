@@ -1,8 +1,10 @@
+(() => {
+const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
+
 document.addEventListener('DOMContentLoaded', () => {
     setupUserInfo();
     cargarPedidos();
 });
-
 function setupUserInfo() {
     // Obtener información del usuario del localStorage
     const nombre = localStorage.getItem('usuarioNombre') || 'Mesero';
@@ -64,7 +66,7 @@ async function cargarPedidos() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/pedido/mesero/${idMesero}`);
+        const response = await fetch(`${API_BASE}/pedido/mesero/${idMesero}`);
         const pedidos = await response.json();
         
         const tbody = document.getElementById('tablaPedidos');
@@ -197,3 +199,6 @@ document.getElementById('modalDetalles')?.addEventListener('click', (e) => {
         e.target.classList.add('hidden');
     }
 });
+
+})();
+

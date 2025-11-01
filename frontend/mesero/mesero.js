@@ -1,9 +1,12 @@
-const idMesero = localStorage.getItem('usuarioId');
-console.log("ID del mesero recuperado:", idMesero);
+(() => {
+document.addEventListener('DOMContentLoaded', () => {
+  const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
+  const idMesero = localStorage.getItem('usuarioId');
+  console.log("ID del mesero recuperado:", idMesero);
 
-fetch(`http://localhost:3000/pedido/mesero/${idMesero}`)
-  .then(res => res.json())
-  .then(pedidos => {
+  fetch(`${API_BASE}/pedido/mesero/${idMesero}`)
+    .then(res => res.json())
+    .then(pedidos => {
     console.log('Pedidos del mesero:', pedidos);
 
     // En la plantilla del mesero la tabla (con id 'tablaPedidos') puede o no existir.
@@ -64,8 +67,9 @@ fetch(`http://localhost:3000/pedido/mesero/${idMesero}`)
     setIfExists('contadorPreparacion', preparacion);
     setIfExists('contadorYaCasi', yaCasi);
     setIfExists('contadorListos', listos);
-  })
-  .catch(error => console.error('Error al cargar pedidos:', error));
+    })
+    .catch(error => console.error('Error al cargar pedidos:', error));
+
   // 1) Obtener nombre del usuario (guardado en login)
   const nombre = localStorage.getItem('usuarioNombre') || 'Mesero invitado';
 
@@ -97,25 +101,27 @@ fetch(`http://localhost:3000/pedido/mesero/${idMesero}`)
     chevron.classList.toggle('rotate-180', isHidden);
   }
 
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleMenu();
-  });
+  if (btn && dd) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+  }
 
   // Cerrar al hacer click fuera
   document.addEventListener('click', (e) => {
-    if (!userMenu.contains(e.target)) closeMenu();
+    if (userMenu && !userMenu.contains(e.target)) closeMenu();
   });
 
   // 4) Cerrar sesión
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      // Limpia lo que uses para sesión
       localStorage.removeItem('usuarioId');
       localStorage.removeItem('usuarioNombre');
       sessionStorage.clear();
-      // Redirige al login (ruta relativa)
       window.location.href = '../login/login.html';
     });
   }
+});
+})();

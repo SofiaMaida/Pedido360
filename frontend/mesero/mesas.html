@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Mesas asignadas</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   </head>
   <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-sans">
 
@@ -36,9 +37,14 @@
     </header>
 
     <!-- Contenido -->
-    <main class="flex-grow mt-32 px-6 md:px-12 max-w-7xl mx-auto w-full pb-28">
-      <section class="pt-8">
-        <div class="text-center mb-10">
+    <main class="flex-grow mt-24 px-6 md:px-12 max-w-7xl mx-auto w-full pb-28">
+      <section class="pt-0">
+        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-purple-700 mb-6 md:mb-8">
+          <a href="mesero.html" class="hover:underline">inicio</a>
+          <span class="text-gray-400">/</span>
+          <span class="font-semibold text-purple-900">Mesas asignadas</span>
+        </nav>
+        <div class="text-center mt-6 md:mt-8 mb-10">
           <h2 class="text-3xl md:text-4xl font-extrabold mb-6 bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent" style="font-family:'Inter', sans-serif;">
             Mesas asignadas
           </h2>
@@ -61,6 +67,7 @@
 
 
     <!-- Scripts -->
+    <script src="../config.js"></script>
     <script src="./mesas.js"></script>
   </body>
      <footer class="fixed bottom-0 w-full bg-white border-t border-gray-200 p-4">

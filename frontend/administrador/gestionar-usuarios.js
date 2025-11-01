@@ -1,13 +1,16 @@
-const API_URL = "http://localhost:3000/usuarios";
-const form = document.getElementById("formUsuario");
-const feedback = document.getElementById("feedback");
-const tableBody = document.getElementById("usuariosTableBody");
-const btnGuardar = document.getElementById("btnGuardarUsuario");
-const estadoUsuarios = document.getElementById("estadoUsuarios");
-const totalUsuarios = document.getElementById("totalUsuarios");
-const totalAdmins = document.getElementById("totalAdmins");
-const totalMozos = document.getElementById("totalMozos");
-const totalCocineros = document.getElementById("totalCocineros");
+(() => {
+const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
+const API_URL = `${API_BASE}/usuarios`;
+
+let form;
+let feedback;
+let tableBody;
+let btnGuardar;
+let estadoUsuarios;
+let totalUsuarios;
+let totalAdmins;
+let totalMozos;
+let totalCocineros;
 
 let ocultarFeedbackTimeout = null;
 
@@ -51,6 +54,7 @@ function normalizarRol(rol) {
 }
 
 function mostrarMensaje(texto, tipo = "success") {
+  if (!feedback) return;
   feedback.textContent = texto;
   feedback.className = "";
   feedback.classList.add(...FEEDBACK_BASE_CLASSES);
@@ -68,7 +72,9 @@ function mostrarMensaje(texto, tipo = "success") {
   }, 4000);
 }
 
-function renderUsuarios(usuarios) {
+function renderUsuarios(Usuarios) {
+  const usuarios = Array.isArray(Usuarios) ? Usuarios : [];
+  if (!tableBody) return;
   if (!usuarios.length) {
     tableBody.innerHTML = `
       <tr>
@@ -104,6 +110,7 @@ function renderUsuarios(usuarios) {
 }
 
 function actualizarEstadisticas(usuarios) {
+  if (!totalUsuarios || !totalAdmins || !totalMozos || !totalCocineros) return;
   const conteo = usuarios.reduce(
     (acc, usuario) => {
       acc.total += 1;
@@ -122,6 +129,7 @@ function actualizarEstadisticas(usuarios) {
 }
 
 async function cargarUsuarios() {
+  if (!tableBody || !estadoUsuarios) return;
   tableBody.innerHTML = `
     <tr>
       <td colspan="4" class="px-6 py-6 text-center text-sm text-gray-500">
@@ -134,16 +142,22 @@ async function cargarUsuarios() {
     renderUsuarios(usuarios);
     actualizarEstadisticas(usuarios);
     const ultimaActualizacion = new Date().toLocaleTimeString();
-    estadoUsuarios.textContent = `Actualizado a las ${ultimaActualizacion}`;
+    if (estadoUsuarios) {
+      estadoUsuarios.textContent = `Actualizado a las ${ultimaActualizacion}`;
+    }
   } catch (error) {
     console.error(error);
-    tableBody.innerHTML = `
+    if (tableBody) {
+      tableBody.innerHTML = `
       <tr>
         <td colspan="4" class="px-6 py-6 text-center text-sm text-red-600">
           Ocurrió un error al cargar los usuarios.
         </td>
       </tr>`;
-    estadoUsuarios.textContent = "No se pudieron cargar los usuarios";
+    }
+    if (estadoUsuarios) {
+      estadoUsuarios.textContent = "No se pudieron cargar los usuarios";
+    }
     mostrarMensaje("No fue posible cargar los usuarios. Inténtalo nuevamente.", "error");
   }
 }
@@ -188,61 +202,81 @@ async function eliminarUsuario(id) {
   }
 }
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+  form = document.getElementById("formUsuario");
+  feedback = document.getElementById("feedback");
+  tableBody = document.getElementById("usuariosTableBody");
+  btnGuardar = document.getElementById("btnGuardarUsuario");
+  estadoUsuarios = document.getElementById("estadoUsuarios");
+  totalUsuarios = document.getElementById("totalUsuarios");
+  totalAdmins = document.getElementById("totalAdmins");
+  totalMozos = document.getElementById("totalMozos");
+  totalCocineros = document.getElementById("totalCocineros");
 
-  const formData = new FormData(form);
-  const nuevoUsuario = {
-    nombre: formData.get("nombre").trim(),
-    correo: formData.get("correo").trim().toLowerCase(),
-    contra: formData.get("contra"),
-    rol: formData.get("rol"),
-  };
+  if (form && btnGuardar) {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-  if (!nuevoUsuario.nombre || !nuevoUsuario.correo || !nuevoUsuario.contra) {
-    mostrarMensaje("Por favor completa todos los campos.", "error");
-    return;
+      const formData = new FormData(form);
+      const nuevoUsuario = {
+        nombre: (formData.get("nombre") || "").toString().trim(),
+        correo: (formData.get("correo") || "").toString().trim().toLowerCase(),
+        contra: formData.get("contra"),
+        rol: formData.get("rol"),
+      };
+
+      if (!nuevoUsuario.nombre || !nuevoUsuario.correo || !nuevoUsuario.contra) {
+        mostrarMensaje("Por favor completa todos los campos.", "error");
+        return;
+      }
+
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = "Guardando...";
+
+      try {
+        await crearUsuario(nuevoUsuario);
+        form.reset();
+        mostrarMensaje("Usuario creado correctamente.", "success");
+        await cargarUsuarios();
+      } catch (error) {
+        mostrarMensaje(error.message || "No fue posible crear el usuario.", "error");
+      } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = "Guardar usuario";
+      }
+    });
   }
 
-  btnGuardar.disabled = true;
-  btnGuardar.textContent = "Guardando...";
+  if (tableBody) {
+    tableBody.addEventListener("click", async (event) => {
+      const boton = event.target.closest("button[data-eliminar]");
+      if (!boton) return;
 
-  try {
-    await crearUsuario(nuevoUsuario);
-    form.reset();
-    mostrarMensaje("Usuario creado correctamente.", "success");
-    await cargarUsuarios();
-  } catch (error) {
-    mostrarMensaje(error.message || "No fue posible crear el usuario.", "error");
-  } finally {
-    btnGuardar.disabled = false;
-    btnGuardar.textContent = "Guardar usuario";
+      const id = boton.dataset.id;
+      const nombre = boton.dataset.nombre;
+
+      const confirmar = window.confirm(`¿Seguro que deseas eliminar a ${nombre}?`);
+      if (!confirmar) return;
+
+      boton.disabled = true;
+      boton.classList.add("opacity-50", "cursor-not-allowed");
+
+      try {
+        await eliminarUsuario(id);
+        mostrarMensaje("Usuario eliminado correctamente.", "success");
+        await cargarUsuarios();
+      } catch (error) {
+        mostrarMensaje(error.message || "No fue posible eliminar el usuario.", "error");
+      } finally {
+        boton.disabled = false;
+        boton.classList.remove("opacity-50", "cursor-not-allowed");
+      }
+    });
+  }
+
+  if (tableBody) {
+    cargarUsuarios();
   }
 });
 
-tableBody.addEventListener("click", async (event) => {
-  const boton = event.target.closest("button[data-eliminar]");
-  if (!boton) return;
-
-  const id = boton.dataset.id;
-  const nombre = boton.dataset.nombre;
-
-  const confirmar = window.confirm(`¿Seguro que deseas eliminar a ${nombre}?`);
-  if (!confirmar) return;
-
-  boton.disabled = true;
-  boton.classList.add("opacity-50", "cursor-not-allowed");
-
-  try {
-    await eliminarUsuario(id);
-    mostrarMensaje("Usuario eliminado correctamente.", "success");
-    await cargarUsuarios();
-  } catch (error) {
-    mostrarMensaje(error.message || "No fue posible eliminar el usuario.", "error");
-  } finally {
-    boton.disabled = false;
-    boton.classList.remove("opacity-50", "cursor-not-allowed");
-  }
-});
-
-cargarUsuarios();
+})();

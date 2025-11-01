@@ -1,3 +1,5 @@
+const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
+
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault(); // Evita que recargue la página
 
@@ -5,7 +7,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   const contra = document.getElementById('password').value;
 
   try {
-    const response = await fetch('http://localhost:3000/usuarios/login', {
+    const response = await fetch(`${API_BASE}/usuarios/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ correo, contra })

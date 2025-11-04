@@ -6,25 +6,35 @@
     <title>Inicio - Pedido360</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./theme.css" />
     <style>
       body { font-family: 'Inter', sans-serif; }
       .gradient-bg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--gradient-primary);
       }
     </style>
     <script src="./config.js"></script>
+    <script src="./theme.js"></script>
+    <script src="./tts.js"></script>
   </head>
-  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" style="background: var(--gradient-bg);">
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
     <!-- Header -->
-    <header class="gradient-bg text-white py-8 shadow-lg">
+    <header class="gradient-bg text-white py-8 shadow-lg" style="background: var(--gradient-primary);">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center">
-          <h1 class="text-5xl md:text-6xl font-bold mb-4">
-            🍽️ Pedido360
-          </h1>
-          <p class="text-xl md:text-2xl text-gray-200 mb-6">
-            Tu experiencia gastronómica, más simple
-          </p>
+          <div class="flex items-center justify-center gap-3">
+            <h1 id="inicioTitle" class="text-5xl md:text-6xl font-bold mb-4">
+              🍽️ Pedido360
+            </h1>
+            <button type="button" onclick="ttsSpeakById('inicioTitle')" class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-110" aria-label="Escuchar título" title="Escuchar título">🔊</button>
+          </div>
+          <div class="flex items-center justify-center gap-2">
+            <p id="inicioSubtitle" class="text-xl md:text-2xl text-gray-200 mb-6">
+              Tu experiencia gastronómica, más simple
+            </p>
+            <button type="button" onclick="ttsSpeakById('inicioSubtitle')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-110 mb-6" aria-label="Escuchar subtítulo" title="Escuchar subtítulo">🔊</button>
+          </div>
         </div>
       </div>
     </header>
@@ -32,24 +42,33 @@
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-6 py-12">
       <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">Bienvenido a Pedido360</h2>
-        <p class="text-lg text-gray-600 mb-12">Descubre nuestra plataforma para una experiencia gastronómica excepcional</p>
+        <div class="flex items-center justify-center gap-2">
+          <h2 id="inicioWelcome" class="text-3xl font-bold mb-8" style="color: var(--text-primary);">Bienvenido a Pedido360</h2>
+          <button type="button" onclick="ttsSpeakById('inicioWelcome')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 mb-8" aria-label="Escuchar título" title="Escuchar título">🔊</button>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <p id="inicioDesc" class="text-lg mb-12" style="color: var(--text-secondary);">Descubre nuestra plataforma para una experiencia gastronómica excepcional</p>
+          <button type="button" onclick="ttsSpeakById('inicioDesc')" class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 mb-12" aria-label="Escuchar descripción" title="Escuchar descripción">🔊</button>
+        </div>
         
         <!-- Opciones -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <a href="login/login.html" class="block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-6 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+          <a href="login/login.html" class="block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-6 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 relative">
+            <button type="button" onclick="event.preventDefault(); ttsSpeakText('Iniciar Sesión. Accede a tu cuenta');" class="absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-110" aria-label="Escuchar opción" title="Escuchar opción">🔊</button>
             <div class="text-4xl mb-4">🔐</div>
             <h3 class="text-xl font-bold mb-2">Iniciar Sesión</h3>
             <p class="text-blue-100">Accede a tu cuenta</p>
           </a>
           
-          <a href="seguimiento/seguimiento.html" class="block bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-6 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+          <a href="seguimiento/seguimiento.html" class="block bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-6 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 relative">
+            <button type="button" onclick="event.preventDefault(); ttsSpeakText('Seguimiento. Consulta tu pedido');" class="absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-110" aria-label="Escuchar opción" title="Escuchar opción">🔊</button>
             <div class="text-4xl mb-4">🕒</div>
             <h3 class="text-xl font-bold mb-2">Seguimiento</h3>
             <p class="text-green-100">Consulta tu pedido</p>
           </a>
           
-          <a href="menu/menu.html" class="block bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-6 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+          <a href="menu/menu.html" class="block bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-6 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 relative">
+            <button type="button" onclick="event.preventDefault(); ttsSpeakText('Ver Menú. Explora nuestros platos');" class="absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200 hover:scale-110" aria-label="Escuchar opción" title="Escuchar opción">🔊</button>
             <div class="text-4xl mb-4">📜</div>
             <h3 class="text-xl font-bold mb-2">Ver Menú</h3>
             <p class="text-yellow-100">Explora nuestros platos</p>
@@ -59,13 +78,13 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-16">
+    <footer class="bg-gray-800 text-white py-8 mt-16" style="background: var(--footer-bg); color: var(--footer-text);">
       <div class="max-w-6xl mx-auto px-6 text-center">
         <p class="text-lg font-medium mb-2">🍽️ Pedido360</p>
-        <p class="text-gray-400">Una aplicación web para la gestión de pedidos en restaurantes.</p>
+        <p style="color: var(--footer-text-muted);">Una aplicación web para la gestión de pedidos en restaurantes.</p>
         <div class="mt-4 flex justify-center space-x-4">
-          <span class="text-sm text-gray-500">📞 +54 11 1234-5678</span>
-          <span class="text-sm text-gray-500">📍 Av. Corrientes 1234, CABA</span>
+          <span class="text-sm" style="color: var(--footer-text-muted);">📞 +54 11 1234-5678</span>
+          <span class="text-sm" style="color: var(--footer-text-muted);">📍 Av. Corrientes 1234, CABA</span>
         </div>
       </div>
     </footer>

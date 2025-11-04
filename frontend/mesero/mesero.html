@@ -6,13 +6,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Pedido360</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../theme.css" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <script src="../config.js"></script>
+    <script src="../theme.js"></script>
+    <script src="../tts.js"></script>
   </head>
-  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-sans">
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-sans" style="background: var(--gradient-bg);">
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
 
     <!-- Barra superior fija -->
-  <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+  <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-10" style="background: var(--gradient-primary);">
       <div class="flex items-center gap-3">
   <span class="text-3xl md:text-4xl select-none" style="font-family: 'Inter', sans-serif;">🍽️</span>
   <p class="text-white text-xl tracking-wide font-bold" style="font-family: 'Inter', sans-serif;">Pedido360</p>
@@ -39,11 +43,14 @@
 
   <!-- Dropdown -->
   <div id="userDropdown"
-       class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 hidden z-20">
+       class="absolute right-0 mt-2 w-56 origin-top-right rounded-xl shadow-lg ring-1 hidden z-20"
+       style="background: var(--card-bg); border-color: var(--border-color);">
     <a href="/perfil/perfil.html"
-       class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">Mi perfil</a>
+       class="block px-4 py-3 text-sm hover:bg-opacity-10"
+       style="color: var(--text-primary); background: var(--bg-tertiary);">Mi perfil</a>
     <button id="logoutBtn"
-            class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50">
+            class="w-full text-left px-4 py-3 text-sm hover:bg-opacity-10"
+            style="color: #ef4444; background: var(--bg-tertiary);">
       Cerrar sesión
     </button>
   </div>
@@ -55,19 +62,19 @@
     <main class="flex-grow mt-24 px-6 md:px-12 max-w-7xl mx-auto w-full pb-28">
       <!-- Bienvenida -->
       <section class="mb-10">
-        <div class="bg-white p-6 rounded-xl shadow-md">
+        <div class="p-6 rounded-xl shadow-md" style="background: var(--card-bg);">
           <div class="flex items-center justify-center">
-            <h1 id="meseroTitle" class="text-3xl font-bold text-center text-purple-800">
+            <h1 id="meseroTitle" class="text-3xl font-bold text-center" style="color: var(--text-primary);">
               ¡Bienvenido al sistema de pedidos!
             </h1>
             <button type="button" aria-label="Leer título" onclick="ttsSpeakById('meseroTitle')" class="ml-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100">🔊</button>
           </div>
-          <p id="meseroSubtitle" class="text-gray-600 text-center mt-3">Supervisa tus pedidos de un vistazo: utiliza las tarjetas resumen para ver pedidos pendientes, en preparación, ya casi y listos en tiempo real.</p>
+          <p id="meseroSubtitle" class="text-center mt-3" style="color: var(--text-secondary);">Supervisa tus pedidos de un vistazo: utiliza las tarjetas resumen para ver pedidos pendientes, en preparación, ya casi y listos en tiempo real.</p>
         </div>
       </section>
 <section class="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-8 items-stretch mb-16">
   <!-- Panel de accesos rápidos -->
-  <aside class="bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4 md:w-80">
+  <aside class="rounded-2xl shadow-lg p-6 flex flex-col gap-4 md:w-80" style="background: var(--card-bg);">
     <a href="./pedidos-mesero.html" 
        class="w-full py-5 rounded-lg text-center font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 text-lg transition">
       📋 Pedidos asignados
@@ -88,28 +95,28 @@
 
   <!-- Tarjetas resumen con la misma altura -->
   <div class="grid grid-cols-2 grid-rows-2 gap-6 h-full">
-    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+    <article class="shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300" style="background: var(--card-bg);">
       <div class="text-4xl mb-2">🕒</div>
-      <p class="text-gray-700 font-semibold">Pendientes</p>
+      <p class="font-semibold" style="color: var(--text-primary);">Pendientes</p>
       <p class="text-2xl font-bold text-blue-700" id="contadorPendientes">0</p>
     </article>
 
-    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+    <article class="shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300" style="background: var(--card-bg);">
       <div class="text-4xl mb-2">🔔</div>
-      <p class="text-gray-700 font-semibold">En preparación</p>
-      <p class="text-2xl font-bold text-yellow-500" id="contadorPreparacion">0</p>
+      <p class="font-semibold" style="color: var(--text-primary);">En preparación</p>
+      <p class="text-2xl font-bold" id="contadorPreparacion" style="color: #f59e0b;">0</p>
     </article>
 
-    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+    <article class="shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300" style="background: var(--card-bg);">
       <div class="text-4xl mb-2">⏳</div>
-      <p class="text-gray-700 font-semibold">Ya casi</p>
-      <p class="text-2xl font-bold text-orange-600" id="contadorYaCasi">0</p>
+      <p class="font-semibold" style="color: var(--text-primary);">Ya casi</p>
+      <p class="text-2xl font-bold" id="contadorYaCasi" style="color: var(--accent);">0</p>
     </article>
 
-    <article class="bg-white shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300">
+    <article class="shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300" style="background: var(--card-bg);">
       <div class="text-4xl mb-2">✅</div>
-      <p class="text-gray-700 font-semibold">Listos</p>
-      <p class="text-2xl font-bold text-green-600" id="contadorListos">0</p>
+      <p class="font-semibold" style="color: var(--text-primary);">Listos</p>
+      <p class="text-2xl font-bold" id="contadorListos" style="color: #10b981;">0</p>
     </article>
   </div>
 </section>
@@ -133,9 +140,9 @@
     </script>
   </body>
       <!-- Footer -->
-  <footer class="fixed bottom-0 w-full bg-white border-t border-gray-200 p-4">
+  <footer class="fixed bottom-0 w-full border-t p-4" style="background: var(--card-bg); border-color: var(--border-color);">
     <div class="container mx-auto flex justify-between items-center">
-      <p class="text-gray-600 text-sm">© Pedido360. Todos los derechos reservados.</p>
+      <p class="text-sm" style="color: var(--text-secondary);">© Pedido360. Todos los derechos reservados.</p>
     </div>
   </footer>
 </html>

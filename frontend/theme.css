@@ -1,0 +1,140 @@
+/* Sistema de tema claro/oscuro para Pedido360 */
+
+/* Variables de tema claro (por defecto) */
+:root {
+  --brand: #6c4df6;
+  --brand-light: #9b7bff;
+  --accent: #ff7043;
+  --accent-light: #ff8a65;
+  
+  /* Colores de fondo */
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f2f4f7;
+  
+  /* Colores de texto */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+  
+  /* Colores de componentes */
+  --pill-bg: #f2f4f7;
+  --pill-active: #1f2937;
+  --pill-active-text: #fff;
+  
+  --card-bg: #ffffff;
+  --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.12);
+  
+  /* Bordes */
+  --border-color: #e5e7eb;
+  --border-color-light: #f3f4f6;
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-hero: linear-gradient(135deg, var(--brand), var(--brand-light));
+  --gradient-bg: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  
+  /* Footer */
+  --footer-bg: #111827;
+  --footer-text: #ffffff;
+  --footer-text-muted: #9ca3af;
+  
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-border: #e5e7eb;
+  --input-focus-border: #667eea;
+  
+  /* Botones */
+  --btn-primary: #007BFF;
+  --btn-primary-hover: #0056b3;
+}
+
+/* Variables de tema oscuro */
+[data-theme="dark"] {
+  --brand: #8b5cf6;
+  --brand-light: #a78bfa;
+  --accent: #ff7043;
+  --accent-light: #ff8a65;
+  
+  /* Colores de fondo */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  
+  /* Colores de texto */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #1f2937;
+  
+  /* Colores de componentes */
+  --pill-bg: #334155;
+  --pill-active: #8b5cf6;
+  --pill-active-text: #fff;
+  
+  --card-bg: #1e293b;
+  --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.4);
+  
+  /* Bordes */
+  --border-color: #475569;
+  --border-color-light: #334155;
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+  --gradient-hero: linear-gradient(135deg, var(--brand), var(--brand-light));
+  --gradient-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  
+  /* Footer */
+  --footer-bg: #020617;
+  --footer-text: #f1f5f9;
+  --footer-text-muted: #94a3b8;
+  
+  /* Inputs */
+  --input-bg: #1e293b;
+  --input-border: #475569;
+  --input-focus-border: #8b5cf6;
+  
+  /* Botones */
+  --btn-primary: #3b82f6;
+  --btn-primary-hover: #2563eb;
+}
+
+/* Estilos para el botón de toggle de tema */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  transition: all 0.3s ease;
+  box-shadow: var(--card-shadow);
+}
+
+[data-theme="dark"] .theme-toggle {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--border-color);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Aplicar transiciones suaves a los cambios de tema */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+

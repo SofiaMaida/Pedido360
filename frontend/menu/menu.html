@@ -7,7 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="menu.css" />
+    <link rel="stylesheet" href="../theme.css" />
     <script src="../config.js"></script>
+    <script src="../theme.js"></script>
+    <script src="../tts.js"></script>
     <style>
       body { font-family: 'Inter', sans-serif; }
       .gradient-bg {
@@ -32,8 +35,9 @@
       }
     </style>
   </head>
-  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-    <header class="gradient-bg text-white py-8 shadow-lg">
+  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" style="background: var(--gradient-bg);">
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
+    <header class="gradient-bg text-white py-8 shadow-lg" style="background: var(--gradient-primary);">
       <div class="max-w-6xl mx-auto px-6">
         <a href="../inicio.html" class="fixed top-6 left-6 z-20 flex items-center gap-2 text-indigo-700 hover:bg-indigo-100 p-2 rounded-lg transition-all duration-300 shadow">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -57,9 +61,9 @@
    <!-- Main Content -->
 <main class="max-w-7xl mx-auto px-6 py-12">
   <!-- Filtros -->
-  <div class="text-center mb-12">
+      <div class="text-center mb-12">
     <div class="flex items-center justify-center gap-2">
-      <h2 id="menuSectionTitle" class="text-3xl font-bold text-gray-800 mb-8">Explorá nuestro menú</h2>
+      <h2 id="menuSectionTitle" class="text-3xl font-bold mb-8" style="color: var(--text-primary);">Explorá nuestro menú</h2>
       <button type="button" aria-label="Leer sección" onclick="ttsSpeakById('menuSectionTitle')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200">🔊</button>
     </div>
     <div id="filters" class="flex justify-center flex-wrap gap-4 mb-8"></div>
@@ -72,19 +76,18 @@
 
 
 <!-- Footer -->
-<footer class="bg-gray-800 text-white py-8 mt-16">
+<footer class="bg-gray-800 text-white py-8 mt-16" style="background: var(--footer-bg); color: var(--footer-text);">
   <div class="max-w-6xl mx-auto px-6 text-center">
     <p class="text-lg font-medium mb-2">🍽️ Pedido360</p>
     <p class="text-gray-400">Una aplicación web para la gestión de pedidos en restaurantes.</p>
     <div class="mt-4 flex justify-center space-x-4">
-      <span class="text-sm text-gray-500">📞 +54 11 1234-5678</span>
-      <span class="text-sm text-gray-500">📍 Av. Corrientes 1234, CABA</span>
+      <span class="text-sm" style="color: var(--footer-text-muted);">📞 +54 11 1234-5678</span>
+      <span class="text-sm" style="color: var(--footer-text-muted);">📍 Av. Corrientes 1234, CABA</span>
     </div>
   </div>
 </footer>
 
 
-<script src="../tts.js"></script>
 <script src="menu.js"></script>
 
   </body>

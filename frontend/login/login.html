@@ -6,46 +6,68 @@
     <title>Iniciar Sesión - Pedido360</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../theme.css" />
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--gradient-primary);
       }
     </style>
+    <script src="../theme.js"></script>
+    <script src="../tts.js"></script>
   </head>
-  <body class="min-h-screen flex items-center justify-center py-12 px-4">
-    <a href="../inicio.html" class="fixed top-6 left-6 z-20 flex items-center gap-2 text-indigo-700 hover:bg-indigo-100 p-2 rounded-lg transition-all duration-300 shadow">
+  <body class="min-h-screen flex items-center justify-center py-12 px-4" style="background: var(--gradient-primary);">
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
+    <a href="../inicio.html" class="fixed top-6 left-6 z-20 flex items-center gap-2 p-2 rounded-lg transition-all duration-300 shadow" style="color: var(--text-inverse); background: rgba(255,255,255,0.2);">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
       <span class="font-semibold text-base">Ir al inicio</span>
     </a>
-    <div class="max-w-md mx-auto bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8 w-full">
+    <div class="max-w-md mx-auto backdrop-blur rounded-2xl shadow-xl p-8 w-full" style="background: var(--card-bg);">
       <div class="text-center mb-8">
         <div class="text-5xl mb-3">🔐</div>
-        <h1 class="text-2xl font-semibold text-gray-800">Accedé a tu experiencia Pedido360</h1>
-        <p class="text-gray-500 mt-2">Ingresá tus datos para continuar</p>
+        <div class="flex items-center justify-center gap-2">
+          <h1 id="loginTitle" class="text-2xl font-semibold" style="color: var(--text-primary);">Accedé a tu experiencia Pedido360</h1>
+          <button type="button" onclick="ttsSpeakById('loginTitle')" class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar título" title="Escuchar título">🔊</button>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <p id="loginSubtitle" class="mt-2" style="color: var(--text-secondary);">Ingresá tus datos para continuar</p>
+          <button type="button" onclick="ttsSpeakById('loginSubtitle')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 mt-2" aria-label="Escuchar subtítulo" title="Escuchar subtítulo">🔊</button>
+        </div>
       </div>
       <form class="space-y-6" id="loginForm">
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Correo electrónico</label>
+          <div class="flex items-center gap-2 mb-2">
+            <label for="email" id="labelEmail" class="block text-sm font-medium flex-1" style="color: var(--text-primary);">Correo electrónico</label>
+            <button type="button" onclick="ttsSpeakById('labelEmail')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar label" title="Escuchar label">🔊</button>
+          </div>
           <input
             type="email"
             id="email"
             name="email"
             placeholder="tu-correo@ejemplo.com"
-            class="w-full rounded-xl border border-gray-200 bg-white/80 px-4 py-3 text-gray-800 shadow-sm transition focus:border-blue-400 focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 focus:outline-none hover:shadow-md"
+            class="w-full rounded-xl border px-4 py-3 shadow-sm transition focus:ring-2 focus:ring-offset-1 focus:outline-none hover:shadow-md"
+            style="border-color: var(--input-border); background: var(--input-bg); color: var(--text-primary);"
+            onfocus="this.style.borderColor='var(--input-focus-border)'; this.style.boxShadow='0 0 0 2px rgba(102, 126, 234, 0.2)'"
+            onblur="this.style.borderColor='var(--input-border)'; this.style.boxShadow=''"
             required
           />
         </div>
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+          <div class="flex items-center gap-2 mb-2">
+            <label for="password" id="labelPassword" class="block text-sm font-medium flex-1" style="color: var(--text-primary);">Contraseña</label>
+            <button type="button" onclick="ttsSpeakById('labelPassword')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar label" title="Escuchar label">🔊</button>
+          </div>
           <input
             type="password"
             id="password"
             name="password"
             placeholder="••••••••"
-            class="w-full rounded-xl border border-gray-200 bg-white/80 px-4 py-3 text-gray-800 shadow-sm transition focus:border-blue-400 focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 focus:outline-none hover:shadow-md"
+            class="w-full rounded-xl border px-4 py-3 shadow-sm transition focus:ring-2 focus:ring-offset-1 focus:outline-none hover:shadow-md"
+            style="border-color: var(--input-border); background: var(--input-bg); color: var(--text-primary);"
+            onfocus="this.style.borderColor='var(--input-focus-border)'; this.style.boxShadow='0 0 0 2px rgba(102, 126, 234, 0.2)'"
+            onblur="this.style.borderColor='var(--input-border)'; this.style.boxShadow=''"
             required
           />
         </div>

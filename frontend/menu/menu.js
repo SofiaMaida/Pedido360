@@ -102,28 +102,43 @@ function renderItems(items) {
   $menu.innerHTML = "";
 
   if (!items.length) {
-    $menu.innerHTML = `<div class="col-span-full text-center text-gray-500 text-lg">Sin resultados</div>`;
+    $menu.innerHTML = `<div class="col-span-full text-center text-lg" style="color: var(--text-secondary);">Sin resultados</div>`;
     return;
   }
 
   items.forEach((item, index) => {
     const card = document.createElement("article");
-    card.className = "card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 flex flex-col";
+    card.className = "card-hover rounded-2xl shadow-lg overflow-hidden border flex flex-col";
     card.style.animationDelay = `${index * 0.1}s`;
+    card.style.background = "var(--card-bg)";
+    card.style.borderColor = "var(--border-color)";
 
     const imageUrl = item.imageUrl || PLACEHOLDER_IMAGE;
     const description = item.descripcion ? escapeHtml(item.descripcion) : "Sin descripción";
     const price = formatPrice(item.precio);
+    const itemId = `menu-item-${index}`;
+    const descId = `menu-desc-${index}`;
+    const priceId = `menu-price-${index}`;
 
     card.innerHTML = `
       <div class="relative overflow-hidden">
         <img src="${imageUrl}" alt="${escapeHtml(item.nombre)}" class="w-full h-56 object-cover transition-transform duration-300 hover:scale-110" />
       </div>
       <div class="p-6 flex flex-col flex-1">
-        <h3 class="text-xl font-bold text-gray-800 mb-2">${escapeHtml(item.nombre)}</h3>
-        <p class="text-gray-600 text-sm mb-4 h-12 overflow-hidden">${description}</p>
-        <div class="flex justify-end items-center mt-auto">
-          <span class="text-2xl font-bold text-indigo-600">${price}</span>
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <h3 id="${itemId}" class="text-xl font-bold flex-1" style="color: var(--text-primary);">${escapeHtml(item.nombre)}</h3>
+          <button type="button" onclick="ttsSpeakById('${itemId}')" class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Escuchar nombre del plato" title="Escuchar nombre del plato">🔊</button>
+        </div>
+        <div class="flex items-start gap-2 mb-4">
+          <p id="${descId}" class="text-sm flex-1 h-12 overflow-hidden" style="color: var(--text-secondary);">${description}</p>
+          <button type="button" onclick="ttsSpeakById('${descId}')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1 mt-1" aria-label="Escuchar descripción" title="Escuchar descripción">🔊</button>
+        </div>
+        <div class="flex justify-end items-center gap-2 mt-auto">
+          <span id="${priceId}" class="text-2xl font-bold" style="color: var(--accent);">${price}</span>
+          <button type="button" onclick="ttsSpeakById('${priceId}')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Escuchar precio" title="Escuchar precio">🔊</button>
+        </div>
+        <div class="mt-2 flex justify-center">
+          <button type="button" onclick="ttsSpeakText('${escapeHtml(item.nombre)}. ${escapeHtml(description)}. Precio: ${price}')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Escuchar información completa" title="Escuchar información completa">🔊</button>
         </div>
       </div>
     `;

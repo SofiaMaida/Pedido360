@@ -1,6 +1,7 @@
+@import url('../theme.css');
+
 .fondo {
     height: 100vh; /*Ocupa toda la altura de la ventana */
-    background-image: url('../images/fondo.jpg'); /*Invoca la imagen mediante la url*/
     background-size: cover; /*Tamaño de la imagen*/
     background-position: center; /*Centra la imagen*/
     background-repeat: no-repeat; /*No repite la imagen*/
@@ -9,9 +10,12 @@
 body {
     margin: 0; /*Elimina todo posible margen*/
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; /*Aplica la fuente*/
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
+
 .barra-superior {
-      background-color: #007BFF; /*Da color al fondo*/
+      background: var(--gradient-primary); /*Da color al fondo*/
       color: white; /*Cambia el color de la letra*/
       display: flex; /*Facilita la alineación, oganización y distrubución*/
       justify-content: space-between; /*Alinea los elementos*/
@@ -20,6 +24,7 @@ body {
       top: 0; /*Ubica en la parte superior de la pantalla*/
       left: 0; /*Ubica en la parte superior de la pantalla*/
       width: 100%; /*Ocupa todo el ancho de la pantalla*/
+      z-index: 100;
 }
 
 .barra-superior a {
@@ -40,7 +45,7 @@ img{
 }
 
 .titulo{
-    color: black; /*Cambia el color de la letra*/
+    color: var(--text-inverse); /*Cambia el color de la letra*/
     font-weight: bold; /*Pone la fuente en negrita*/
     font-size: 20px; /*Indica el tamaño de la letra*/
     margin-left: 2px; /*Crea un margen desde el lado izquierdo*/
@@ -49,16 +54,18 @@ img{
 h1{
     text-align: left; /*El texto comienza desde el lado izquierdo*/
     margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+    color: var(--text-primary);
 }
 
 h4{
-    color:darkslategrey; /*Cambia el color de la letra*/
+    color: var(--text-secondary); /*Cambia el color de la letra*/
     text-align: left; /*El texto comienza desde el lado izquierdo*/
     margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
 }
 
 .contenido{
     margin-top: 70px; /*Crea un margen desde la parte superior*/
+    background: var(--bg-primary);
 }
 
 .estados{
@@ -68,50 +75,55 @@ h4{
 }
 
 .pendiente{
-    background-color: white; /*Da color al fondo*/
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    background-color: var(--card-bg); /*Da color al fondo*/
+    box-shadow: var(--card-shadow); /*Aplica sombreado al contendor*/
     width: 80%; /*Limita el ancho*/
     margin: 20px; /*Crea un margen*/
     padding: 20px; /*Crea un relleno*/
     border-radius: 10px; /*Bordes redondeados*/
+    color: var(--text-primary);
 }
 
 .preparando{
-    background-color: white; /*Da color al fondo*/
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    background-color: var(--card-bg); /*Da color al fondo*/
+    box-shadow: var(--card-shadow); /*Aplica sombreado al contendor*/
     width: 80%; /*Limita el ancho*/
     margin: 20px; /*Crea un margen*/
     padding: 20px; /*Crea un relleno*/
     border-radius: 10px; /*Bordes redondeados*/
+    color: var(--text-primary);
 }
 
 .listo{
-    background-color: white; /*Da color al fondo*/
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    background-color: var(--card-bg); /*Da color al fondo*/
+    box-shadow: var(--card-shadow); /*Aplica sombreado al contendor*/
     width: 80%; /*Limita el ancho*/
     margin: 20px; /*Crea un margen*/
     padding: 20px; /*Crea un relleno*/
     border-radius: 10px; /*Bordes redondeados*/
+    color: var(--text-primary);
 }
 
 h2{
     margin-left: 50px; /*Crea un margen desde el lado izquierdo*/
+    color: var(--text-primary);
 }
 
 .pedido{
-    background-color: white; /*Da color al fondo*/
+    background-color: var(--card-bg); /*Da color al fondo*/
     display: flex; /*Facilita la alineación, oganización y distrubución*/
     justify-content: space-between; /*Alinea los elementos*/
     align-items: center; /*Alinea los elementos*/
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /*Aplica sombreado al contendor*/
+    box-shadow: var(--card-shadow); /*Aplica sombreado al contendor*/
     margin: 20px; /*Crea un margen*/
     padding: 20px; /*Crea un relleno*/
     border-radius: 10px; /*Bordes redondeados*/
+    color: var(--text-primary);
 }
 
 
 .barra-inferior{
-    background-color: #007BFF; /*Da color al fondo*/
+    background: var(--gradient-primary); /*Da color al fondo*/
     color: white; /*Cambia el color de la letra*/
     display: flex; /*Facilita la alineación, oganización y distrubución*/
     justify-content: space-between; /*Alinea los elementos*/
@@ -121,6 +133,7 @@ h2{
     left: 0; /*Ubica en la parte superior de la pantalla*/
     width: 100%; /*Ocupa todo el ancho de la pantalla*/
     padding: 5px; /*Crea un relleno*/
+    z-index: 100;
 }
 
 .barra-inferior a {

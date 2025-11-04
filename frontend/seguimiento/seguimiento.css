@@ -1,10 +1,13 @@
+@import url('../theme.css');
+
 .step {
     padding: 10px 15px;
-    border-left: 4px solid lightgray;
+    border-left: 4px solid var(--border-color);
     margin-left: 10px;
     position: relative;
-    background-color: #f9fafb;
+    background-color: var(--card-bg);
     border-radius: 4px;
+    color: var(--text-primary);
   }
   
   .step::before {
@@ -14,7 +17,7 @@
     top: 10px;
     width: 12px;
     height: 12px;
-    background-color: lightgray;
+    background-color: var(--border-color);
     border-radius: 50%;
   }
   
@@ -23,6 +26,5 @@
   }
   
   .step.current::before {
-    background-color: #f59e0b;
+    background-color: var(--accent);
   }
-  

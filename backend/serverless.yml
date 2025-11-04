@@ -1,3 +1,4 @@
+useDotenv: true
 service: pedido360-back
 frameworkVersion: '3'
 

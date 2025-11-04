@@ -8,7 +8,8 @@
     "start": "node index.js",
     "dev": "node index.js",
     "test:notificaciones": "node scripts/probar-notis.js",
-    "test:notificaci\u00f3nes": "npm run test:notificaciones --"
+    "test:notificaciones:alias": "npm run test:notificaciones --"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

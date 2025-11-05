@@ -1,48 +1,34 @@
-import express from 'express';
-import cors from 'cors';
+import 'dotenv/config';
+import { createServer } from 'http';
+import app from './app.js';
 import { express_config } from './config.js';
-import mesasRoutes from './routes/mesa.js';
-import pedidoRoutes from './routes/pedido.js';
-import usuarioRoutes from './routes/usuario.js';
-import menuRoutes from './routes/menu.js';
 import { connect } from './database/db.js';
+import { configureNotificaciones } from './src/utils/notificaciones.js';
 
-const app = express();
+// Servidor HTTP solo para ejecución local/EC2
+const httpServer = createServer(app);
 
-// Define HOST/PORT with safe defaults for private subnets
-const PORT = Number(express_config.port) || 8080;
-const HOST = express_config.host || '0.0.0.0';
+const HOST = process.env.HOST || express_config.host || '0.0.0.0';
+const PORT = Number(process.env.PORT || express_config.port || 8080);
+const FRONT_ORIGIN = process.env.FRONT_ORIGIN || 'https://pedido360-front.s3.us-east-1.amazonaws.com';
 
-// Configure CORS to only allow the S3 frontend origin (from .env)
-
-app.use(cors());
-// Handle preflight
-app.options('*', cors());
-app.use(express.json());
-app.use(express.static('public'));
-// Lightweight health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Servidor funcionando correctamente 🚀' });
+configureNotificaciones(httpServer, {
+  cors: { origin: FRONT_ORIGIN, credentials: true },
 });
-app.use(mesasRoutes);
-app.use(pedidoRoutes);
-app.use(usuarioRoutes);
-app.use('/menu', menuRoutes);
 
 const startServer = async () => {
-  // Start HTTP server first so the port is exposed even if DB is unreachable
-  app.listen(PORT, HOST, () => {
+  httpServer.listen(PORT, HOST, () => {
     console.log(`Servidor corriendo en http://${HOST}:${PORT}`);
   });
 
-  // Then attempt DB connection without blocking the listener
   try {
     await connect();
     console.log('DB MongoDB conectada correctamente');
   } catch (error) {
-    console.error('No se pudo conectar a la base de datos:', error.message);
-    // Do not exit; keep the server up in lab environments without Internet
+    console.error('No se pudo conectar a la base de datos:', error?.message);
+    // No detener el servidor: útil en entornos sin salida a Internet
   }
 };
 
 startServer();
+

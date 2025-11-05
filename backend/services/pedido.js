@@ -9,7 +9,7 @@ import {
 } from "../repository/pedido.js";
 import QRCode from 'qrcode';
 import { public_config } from '../config.js';
-
+import { notifyCambioEstado } from "../src/utils/notificaciones.js";
 const calcTotal = (items = []) =>
   items.reduce(
     (acc, it) =>
@@ -72,6 +72,12 @@ export const agregarPedidoService = async (pedido) => {
 // Editar un pedido existente (recalcula total si cambian items)
 export const editarPedidoService = async (id, body) => {
   try {
+    const pedidoOriginal = await obtenerPedidoRepository(id);
+
+    if (!pedidoOriginal) {
+      return null;
+    }
+
     if (Array.isArray(body.items)) {
       body.total = calcTotal(body.items);
     }
@@ -79,7 +85,14 @@ export const editarPedidoService = async (id, body) => {
     // Importante: que el repositorio use { new: true, runValidators: true }
     const actualizado = await editarPedidoRepository(id, body);
 
-    if (!actualizado) throw new Error("Pedido no encontrado");
+  if (!actualizado) {
+      return null;
+    }
+
+    if (pedidoOriginal.estado !== actualizado.estado) {
+      await notifyCambioEstado(actualizado);
+    }
+
     return actualizado;
   } catch (error) {
     console.error("Error en el Servicio:", error);

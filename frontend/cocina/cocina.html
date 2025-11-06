@@ -43,7 +43,7 @@
                 </div>
             </div>
         </header>
-    <div class="mt-24 max-w-6xl mx-auto px-4 pt-4">
+    <div class="mt-24 max-w-6xl mx-auto px-4 pt-4 pb-28">
         <section class="mb-8">
             <div class="p-6 rounded-xl shadow-md" style="background: var(--card-bg);">
                 <div class="flex items-center justify-center">
@@ -57,32 +57,32 @@
             </div>
         </section>
 
-        <div class="mt-6 bg-white/80 backdrop-blur shadow rounded-lg p-3 flex flex-wrap gap-2 items-center justify-center">
-            <div class="text-sm text-gray-700 mr-2">Filtrar:</div>
-            <button id="filterAll" class="px-4 py-1.5 rounded-full border bg-gray-700 text-white">Todos</button>
-            <button id="filterPendiente" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Pendiente</button>
-            <button id="filterPreparando" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Preparando</button>
-            <button id="filterYaCasi" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Ya casi</button>
-            <button id="filterListo" class="px-4 py-1.5 rounded-full border bg-white text-blue-600 border-blue-600">Listo</button>
+        <div class="filter-bar shadow rounded-lg p-3 flex flex-wrap gap-2 items-center justify-center">
+            <div class="text-sm mr-2" style="color: var(--text-primary);">Filtrar:</div>
+            <button id="filterAll" class="filter-chip active" aria-pressed="true">Todos</button>
+            <button id="filterPendiente" class="filter-chip" aria-pressed="false">Pendiente</button>
+            <button id="filterPreparando" class="filter-chip" aria-pressed="false">Preparando</button>
+            <button id="filterYaCasi" class="filter-chip" aria-pressed="false">Ya casi</button>
+            <button id="filterListo" class="filter-chip" aria-pressed="false">Listo</button>
             <button id="refreshBtn" class="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Refrescar</button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-5 mt-8">
-            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+            <div class="shadow-md p-5 rounded-lg text-center" style="background: var(--card-bg); color: var(--text-primary); box-shadow: var(--card-shadow);">
                 <div class="text-2xl">🕒</div>
                 <div class="card-title">Pendientes</div>
                 <div class="card-number text-2xl font-semibold" id="contadorPendientes">0</div>
             </div>
-            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+            <div class="shadow-md p-5 rounded-lg text-center" style="background: var(--card-bg); color: var(--text-primary); box-shadow: var(--card-shadow);">
                 <div class="text-2xl">🔔</div>
                 <div class="card-title">En preparación</div>
                 <div class="card-number text-2xl font-semibold" id="contadorPreparacion">0</div>
             </div>
-            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+            <div class="shadow-md p-5 rounded-lg text-center" style="background: var(--card-bg); color: var(--text-primary); box-shadow: var(--card-shadow);">
                 <div class="text-2xl">⏳</div>
                 <div class="card-title">Ya casi</div>
                 <div class="card-number text-2xl font-semibold" id="contadorYaCasi">0</div>
             </div>
-            <div class="bg-white shadow-md p-5 rounded-lg text-center">
+            <div class="shadow-md p-5 rounded-lg text-center" style="background: var(--card-bg); color: var(--text-primary); box-shadow: var(--card-shadow);">
                 <div class="text-2xl">✅</div>
                 <div class="card-title">Listos</div>
                 <div class="card-number text-2xl font-semibold" id="contadorListos">0</div>
@@ -90,14 +90,14 @@
         </div>
 
         <div class="cola">
-            <h2 class="text-left text-gray-900 mt-6">Cola de pedidos</h2>
+            <h2 class="text-left mt-6" style="color: var(--text-primary);">Cola de pedidos</h2>
             <div id="listaPedidos" class="mt-4 space-y-4"></div>
         </div>
     </div>
 
-    <footer class="w-full bg-white border-t border-gray-200 p-4 mt-12">
+    <footer class="fixed bottom-0 w-full border-t p-4" style="background: var(--card-bg); border-color: var(--border-color);">
         <div class="container mx-auto flex justify-between items-center">
-            <p class="text-gray-600 text-sm">© Pedido360. Todos los derechos reservados.</p>
+            <p class="text-sm" style="color: var(--text-secondary);">© Pedido360. Todos los derechos reservados.</p>
         </div>
     </footer>
     </div>

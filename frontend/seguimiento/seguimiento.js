@@ -1,6 +1,7 @@
 // --- Parámetros y nodos ---
 const params = new URLSearchParams(window.location.search);
-const pedidoId = params.get("id");
+// Acepta tanto ?id=... como ?pedidoId=... para compatibilidad
+const pedidoId = params.get("id") || params.get("pedidoId");
 
 const searchPanel = document.getElementById("search-panel");
 const resultPanel = document.getElementById("result-panel");
@@ -12,6 +13,93 @@ const resultMessage = document.getElementById("result-message");
 
 // Detecta entorno (opcional)
 const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
+const SOCKET_BASE = window.SOCKET_BASE || localStorage.getItem('SOCKET_BASE') || 'http://localhost:8080';
+let currentPedidoId = pedidoId || null;
+let pollTimer = null;
+const POLL_MS = 10000;
+
+// --- Feedback (sonido + vibración) ante cambio de estado ---
+let lastEstado = null;
+let firstRenderDone = false;
+let audioCtx = null;
+// URL de sonido configurable (puedes cambiarla por localStorage o window.NOTIF_SOUND_URL)
+const SOUND_URL =
+  (typeof window !== 'undefined' && (window.NOTIF_SOUND_URL || localStorage.getItem('NOTIF_SOUND_URL'))) ||
+  'https://pedido360-menu-images.s3.us-east-1.amazonaws.com/restaurant-bell-101396.mp3';
+let ding;
+try {
+  ding = new Audio(SOUND_URL);
+  ding.preload = 'auto';
+} catch (_) { /* noop */ }
+function ensureAudio() {
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume?.();
+    }
+  } catch (_) { /* noop */ }
+}
+function beep(freq = 880, durMs = 200) {
+  try {
+    ensureAudio();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + 0.01);
+    osc.start(now);
+    const end = now + durMs / 1000;
+    osc.stop(end);
+    gain.gain.exponentialRampToValueAtTime(0.0001, end);
+  } catch (_) { /* noop */ }
+}
+function vibrate(pattern = [150, 75, 150]) {
+  try {
+    if ('vibrate' in navigator) navigator.vibrate(pattern);
+  } catch (_) { /* noop */ }
+}
+function feedbackOnChange(nuevoEstado) {
+  const isListo = String(nuevoEstado || '').toLowerCase() === 'listo para servir';
+  let played = false;
+  try {
+    if (ding) {
+      try { ding.currentTime = 0; } catch(_){}
+      const pr = ding.play();
+      if (pr && typeof pr.then === 'function') {
+        pr.then(() => { /* ok */ }).catch(() => { beep(isListo ? 1200 : 880, 200); });
+      }
+      played = true;
+    }
+  } catch(_) { /* noop */ }
+  if (!played) {
+    beep(isListo ? 1200 : 880, 200);
+  }
+  vibrate(isListo ? [200, 100, 200] : [120]);
+}
+// Desbloqueo de audio en el primer toque/click
+document.addEventListener('pointerdown', ensureAudio, { once: true });
+// Intento extra de desbloqueo de audio en móviles
+const unlock = () => {
+  try {
+    ensureAudio();
+    if (ding) {
+      const p = ding.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => { try { ding.pause(); ding.currentTime = 0; } catch(_){} }).catch(()=>{});
+      }
+    }
+  } catch(_) { /* noop */ }
+};
+document.addEventListener('touchstart', unlock, { once: true, passive: true });
+document.addEventListener('click', unlock, { once: true });
 
 // Corrige posibles caracteres corruptos en títulos/encabezados
 try {
@@ -29,7 +117,6 @@ try {
 const estados = [
   { clave: "pendiente", texto: "Recibido" },
   { clave: "preparando", texto: "En preparación" },
-  { clave: "ya casi", texto: "¡Ya casi!" },
   { clave: "en 10 min", texto: "En 10 min" },
   { clave: "listo para servir", texto: "Listo para servir" }
 ];
@@ -54,14 +141,14 @@ const showResult = (visible) => {
 };
 
 const renderLoading = () => {
-  resultMessage.innerHTML = `<p style="color: var(--text-secondary);">Buscando pedido...</p>`;
+  resultMessage.innerHTML = `<p class="text-gray-600">Buscando pedido...</p>`;
   infoBox.innerHTML = `
     <div class="space-y-4 animate-pulse">
-      <div class="h-4 rounded w-3/4" style="background: var(--bg-tertiary);"></div>
-      <div class="h-4 rounded w-1/2" style="background: var(--bg-tertiary);"></div>
-      <div class="h-4 rounded w-2/3" style="background: var(--bg-tertiary);"></div>
-      <div class="h-4 rounded w-1/2" style="background: var(--bg-tertiary);"></div>
-      <div class="h-4 rounded w-1/3" style="background: var(--bg-tertiary);"></div>
+      <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div class="h-4 bg-gray-200 rounded w-1/3"></div>
     </div>
   `;
 
@@ -88,14 +175,14 @@ const renderLoading = () => {
       '<span class="text-white text-lg font-bold">$</span>'
     );
   } catch (_) { /* noop */ }
-  timeline.innerHTML = `<div class="pl-6 text-sm" style="color: var(--text-secondary);">Preparando información...</div>`;
+  timeline.innerHTML = `<div class="pl-6 text-sm text-gray-500">Preparando información...</div>`;
 };
 
 const renderError = (message) => {
   const safeMessage = escapeHtml(message || "Error al cargar el estado del pedido.");
-  resultMessage.innerHTML = `<p class="font-semibold" style="color: #ef4444;">${safeMessage}</p>`;
+  resultMessage.innerHTML = `<p class="text-red-600 font-semibold">${safeMessage}</p>`;
   infoBox.innerHTML = `
-    <div class="col-span-full text-center text-sm" style="color: var(--text-secondary);">
+    <div class="col-span-full text-center text-sm text-gray-500">
       No se encontró información para el pedido solicitado.
     </div>
   `;
@@ -115,105 +202,74 @@ const renderPedido = (data) => {
   const safeEstado = escapeHtml(data.estadoActual ?? "Sin estado");
   const safeDescripcion = escapeHtml(data.descripcion ?? "-");
 
-  resultMessage.innerHTML = `<p class="font-semibold" style="color: #10b981;">Pedido encontrado correctamente.</p>`;
-
-  // Función auxiliar para obtener el color de fondo según el tema
-  const getBgColor = (colorClass) => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    if (isDark) {
-      return 'rgba(30, 41, 59, 0.5)'; // Fondo oscuro más suave
-    }
-    return colorClass; // Mantener colores originales en modo claro
-  };
+  resultMessage.innerHTML = `<p class="text-green-600 font-semibold">Pedido encontrado correctamente.</p>`;
 
   infoBox.innerHTML = `
     <div class="space-y-4">
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 rounded-lg" style="background: rgba(59, 130, 246, 0.1);">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-blue-50 rounded-lg">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-blue-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm font-bold">#</span>
         </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <p id="pedidoIdLabel" class="text-sm" style="color: var(--text-secondary);">ID del pedido</p>
-            <button type="button" onclick="ttsSpeakById('pedidoIdLabel')" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar label" title="Escuchar">🔊</button>
-          </div>
-          <div class="flex items-center gap-2">
-            <p id="pedidoIdValue" class="font-semibold" style="color: var(--text-primary);">${safeId}</p>
-            <button type="button" onclick="ttsSpeakById('pedidoIdValue')" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar ID" title="Escuchar">🔊</button>
-          </div>
+        <div>
+          <p class="text-sm text-gray-600">ID del pedido</p>
+          <p class="font-semibold text-gray-800">${safeId}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 rounded-lg" style="background: rgba(16, 185, 129, 0.1);">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-green-50 rounded-lg">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-green-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">📊</span>
         </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <p id="pedidoEstadoLabel" class="text-sm" style="color: var(--text-secondary);">Estado actual</p>
-            <button type="button" onclick="ttsSpeakById('pedidoEstadoLabel')" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar label" title="Escuchar">🔊</button>
-          </div>
-          <div class="flex items-center gap-2">
-            <p id="pedidoEstadoValue" class="font-semibold" style="color: var(--text-primary);">${safeEstado}</p>
-            <button type="button" onclick="ttsSpeakById('pedidoEstadoValue')" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar estado" title="Escuchar">🔊</button>
-          </div>
+        <div>
+          <p class="text-sm text-gray-600">Estado actual</p>
+          <p class="font-semibold text-gray-800">${safeEstado}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 rounded-lg" style="background: rgba(139, 92, 246, 0.1);">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-purple-50 rounded-lg">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-purple-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">📅</span>
         </div>
         <div>
-          <p class="text-sm" style="color: var(--text-secondary);">Fecha de creación</p>
-          <p class="font-semibold" style="color: var(--text-primary);">${data.creadoEn ? new Date(data.creadoEn).toLocaleString("es-AR") : "-"}</p>
+          <p class="text-sm text-gray-600">Fecha de creación</p>
+          <p class="font-semibold text-gray-800">${data.creadoEn ? new Date(data.creadoEn).toLocaleString("es-AR") : "-"}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 rounded-lg" style="background: rgba(249, 115, 22, 0.1);">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-orange-50 rounded-lg">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-orange-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">📝</span>
         </div>
         <div>
-          <p class="text-sm" style="color: var(--text-secondary);">Descripción</p>
-          <p class="font-semibold" style="color: var(--text-primary);">${safeDescripcion}</p>
+          <p class="text-sm text-gray-600">Descripción</p>
+          <p class="font-semibold text-gray-800">${safeDescripcion}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 rounded-lg" style="background: rgba(239, 68, 68, 0.1);">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-red-50 rounded-lg">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-red-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">💰</span>
         </div>
         <div>
-          <p class="text-sm" style="color: var(--text-secondary);">Total</p>
-          <p class="font-semibold" style="color: var(--text-primary);">${formatCurrency(data.total)}</p>
+          <p class="text-sm text-gray-600">Total</p>
+          <p class="font-semibold text-gray-800">${formatCurrency(data.total)}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-start space-x-3 p-4 lg:p-5 rounded-lg" style="background: rgba(234, 179, 8, 0.1);">
+      <div class="w-full flex items-start space-x-3 p-4 lg:p-5 bg-yellow-50 rounded-lg">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-yellow-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">ID</span>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <p class="text-sm" style="color: var(--text-secondary);">Items</p>
-            <button type="button" onclick="ttsSpeakText('Items del pedido')" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar label" title="Escuchar">🔊</button>
-          </div>
-          <div class="font-semibold space-y-1" style="color: var(--text-primary);">
-            ${(Array.isArray(data.items) && data.items.length) ? data.items.map((it, idx) => {
+          <p class="text-sm text-gray-600">Items</p>
+          <div class="font-semibold text-gray-800 space-y-1">
+            ${(Array.isArray(data.items) && data.items.length) ? data.items.map(it => {
               const n = escapeHtml(it?.nombre ?? "");
               const c = Number(it?.cantidad) || 1;
               const p = Number(it?.precioUnitario) || 0;
               const subtotal = formatCurrency(c * p);
-              const itemId = `item-${idx}`;
-              return `<div class="flex justify-between gap-3 items-center">
-                <span id="${itemId}" class="truncate">${n} x ${c}</span>
-                <div class="flex items-center gap-2">
-                  <span style="color: var(--text-secondary);">${subtotal}</span>
-                  <button type="button" onclick="ttsSpeakText('${escapeHtml(n)}, cantidad ${c}, precio ${escapeHtml(subtotal)}')" class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110" aria-label="Escuchar item" title="Escuchar">🔊</button>
-                </div>
-              </div>`;
-            }).join("") : '<span style="color: var(--text-secondary);" class="font-normal">Sin items</span>'}
+              return `<div class=\"flex justify-between gap-3\"><span class=\"truncate\">${n} x ${c}</span><span class=\"text-gray-600\">${subtotal}</span></div>`;
+            }).join("") : '<span class="text-gray-500 font-normal">Sin items</span>'}
           </div>
         </div>
       </div>
@@ -221,10 +277,8 @@ const renderPedido = (data) => {
   `;
 
   const timelineContent = estados.map((estado) => {
-    let circleClass = "";
-    let circleStyle = "border-color: var(--border-color); background: var(--card-bg);";
-    let labelClass = "";
-    let labelStyle = "color: var(--text-secondary);";
+    let circleClass = "border-gray-300 bg-white";
+    let labelClass = "text-gray-600";
 
     const mapHoraKey = {
       'pendiente': 'recibido',
@@ -256,22 +310,18 @@ const renderPedido = (data) => {
 
     if (estado.clave === data.estadoActual) {
       circleClass = "border-purple-500 bg-purple-500";
-      circleStyle = "border-color: #8b5cf6; background: #8b5cf6;";
-      labelClass = "font-semibold";
-      labelStyle = "color: #8b5cf6;";
+      labelClass = "text-purple-600 font-semibold";
     } else if (hora && hora !== '--') {
       circleClass = "border-green-500 bg-green-500";
-      circleStyle = "border-color: #10b981; background: #10b981;";
-      labelClass = "font-semibold";
-      labelStyle = "color: #10b981;";
+      labelClass = "text-green-600 font-semibold";
     }
 
     return `
       <div class="relative pl-10">
-        <div class="absolute -left-[29px] top-2 w-5 h-5 rounded-full border-4" style="${circleStyle}"></div>
-        <div class="rounded-lg p-4 lg:p-5 shadow-sm" style="background: var(--bg-tertiary);">
-          <p class="text-sm ${labelClass}" style="${labelStyle}">${estado.texto}</p>
-          <p class="text-xs mt-1" style="color: var(--text-secondary);">${timeLabel}</p>
+        <div class="absolute -left-[29px] top-2 w-5 h-5 rounded-full border-4 ${circleClass}"></div>
+        <div class="bg-gray-50 rounded-lg p-4 lg:p-5 shadow-sm">
+          <p class="text-sm ${labelClass}">${estado.texto}</p>
+          <p class="text-xs text-gray-500 mt-1">${timeLabel}</p>
         </div>
       </div>
     `;
@@ -306,32 +356,28 @@ const renderPedido = (data) => {
       }
       const esActual = estado.clave === actual;
       const esPrevio = idx > -1 && idxActual > -1 && idx < idxActual;
-      let circleStyle = "border-color: var(--border-color); background: var(--card-bg);";
-      let labelStyle = "color: var(--text-secondary);";
-      let labelClass = "";
+      let circleClass = "border-gray-300 bg-white";
+      let labelClass = "text-gray-600";
       let timeLabel = '—';
       if (esActual) {
-        circleStyle = "border-color: #8b5cf6; background: #8b5cf6;";
-        labelStyle = "color: #8b5cf6;";
-        labelClass = "font-semibold";
+        circleClass = "border-purple-500 bg-purple-500";
+        labelClass = "text-purple-600 font-semibold";
         timeLabel = safeHora ? `Registrado a las ${safeHora}` : 'En curso';
       } else if (esPrevio) {
-        circleStyle = "border-color: #10b981; background: #10b981;";
-        labelStyle = "color: #10b981;";
-        labelClass = "font-semibold";
+        circleClass = "border-green-500 bg-green-500";
+        labelClass = "text-green-600 font-semibold";
         timeLabel = safeHora ? `Registrado a las ${safeHora}` : 'Completado';
       } else if (safeHora) {
-        circleStyle = "border-color: #10b981; background: #10b981;";
-        labelStyle = "color: #10b981;";
-        labelClass = "font-semibold";
+        circleClass = "border-green-500 bg-green-500";
+        labelClass = "text-green-600 font-semibold";
         timeLabel = `Registrado a las ${safeHora}`;
       }
       return `
         <div class="relative pl-10">
-          <div class="absolute -left-[29px] top-2 w-5 h-5 rounded-full border-4" style="${circleStyle}"></div>
-          <div class="rounded-lg p-4 lg:p-5 shadow-sm" style="background: var(--bg-tertiary);">
-            <p class="text-sm ${labelClass}" style="${labelStyle}">${estado.texto}</p>
-            <p class="text-xs mt-1" style="color: var(--text-secondary);">${timeLabel}</p>
+          <div class="absolute -left-[29px] top-2 w-5 h-5 rounded-full border-4 ${circleClass}"></div>
+          <div class="bg-gray-50 rounded-lg p-4 lg:p-5 shadow-sm">
+            <p class="text-sm ${labelClass}">${estado.texto}</p>
+            <p class="text-xs text-gray-500 mt-1">${timeLabel}</p>
           </div>
         </div>
       `;
@@ -340,6 +386,14 @@ const renderPedido = (data) => {
   } catch (_) {
     timeline.innerHTML = timelineContent;
   }
+  try {
+    const nuevoEstado = data?.estadoActual ?? null;
+    if (firstRenderDone && nuevoEstado && nuevoEstado !== lastEstado) {
+      feedbackOnChange(nuevoEstado);
+    }
+    lastEstado = nuevoEstado;
+    firstRenderDone = true;
+  } catch (_) { /* noop */ }
   showResult(true); // aseguramos que se vea el panel de resultados
 };
 
@@ -364,6 +418,7 @@ const fetchPedido = (id) => {
       return res.json();
     })
     .then((data) => {
+      currentPedidoId = data?.id || id;
       renderPedido(data);
     })
     .catch((error) => {
@@ -372,10 +427,21 @@ const fetchPedido = (id) => {
     });
 };
 
+// --- Polling (compatible con API Gateway) ---
+const startPolling = () => {
+  if (pollTimer) clearInterval(pollTimer);
+  if (!currentPedidoId) return;
+  pollTimer = setInterval(() => {
+    if (!currentPedidoId) return;
+    fetchPedido(currentPedidoId);
+  }, POLL_MS);
+};
+
 // --- Estado inicial ---
 if (pedidoId) {
   // Hay ?id=... => mostrar ambos paneles y buscar
   fetchPedido(pedidoId);
+  startPolling();
 } else {
   // No hay id => mostrar buscador, ocultar resultados
   showSearch(true);
@@ -396,9 +462,49 @@ if (searchForm) {
 
     // Actualiza la URL (sin recargar)
     const url = new URL(window.location.href);
+    // Escribe ambos parámetros para compatibilidad externa
     url.searchParams.set("id", id);
+    url.searchParams.set("pedidoId", id);
     window.history.replaceState({}, "", url);
 
+    currentPedidoId = id;
     fetchPedido(id);
+    startPolling();
   });
 }
+
+// --- Tiempo real con Socket.IO ---
+(function setupRealtime() {
+  if (typeof io !== 'function' || !Boolean(window.USE_SOCKETS ?? false)) {
+    console.warn('[Seguimiento] Socket.IO client no está disponible');
+    return;
+  }
+  try {
+    const socket = io(SOCKET_BASE, {
+      withCredentials: true,
+      transports: ['websocket', 'polling']
+    });
+
+    socket.on('connect', () => {
+      console.log('[Seguimiento] Conectado a Socket.IO:', socket.id);
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log('[Seguimiento] Desconectado de Socket.IO:', reason);
+    });
+
+    const EVENTO_CAMBIO_ESTADO = 'pedido:estado:cambiado';
+    socket.on(EVENTO_CAMBIO_ESTADO, (payload) => {
+      const incomingId = String(payload?.id ?? payload?._id ?? '');
+      const targetId = String(currentPedidoId ?? '');
+      if (!incomingId || !targetId) return;
+      if (incomingId === targetId) {
+        console.log('[Seguimiento] Actualizando pedido por evento:', incomingId);
+        fetchPedido(targetId);
+      }
+    });
+  } catch (e) {
+    console.error('[Seguimiento] Error iniciando Socket.IO:', e);
+  }
+})();
+

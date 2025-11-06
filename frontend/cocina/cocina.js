@@ -119,7 +119,7 @@ function renderListaPedidos(pedidos) {
   cont.innerHTML = '';
 
   if (!pedidos.length) {
-    cont.innerHTML = '<div class="bg-white shadow m-5 p-5 rounded text-gray-600">No hay pedidos.</div>';
+    cont.innerHTML = '<div class="m-5 p-5 rounded" style="background: var(--card-bg); color: var(--text-secondary); box-shadow: var(--card-shadow);">No hay pedidos.</div>';
     return;
   }
 
@@ -146,7 +146,8 @@ function renderListaPedidos(pedidos) {
                                         'border-l-4 border-gray-300';
 
       const card = document.createElement('div');
-      card.className = `bg-white flex justify-between items-start shadow-md p-5 rounded-lg w-full ${bordeEstado}`;
+      card.className = `flex justify-between items-start shadow-md p-5 rounded-lg w-full ${bordeEstado}`;
+      card.setAttribute('style', 'background: var(--card-bg); color: var(--text-primary); box-shadow: var(--card-shadow);');
 
       const items = Array.isArray(pedido.items) ? pedido.items : [];
       const itemsHtml = items.map((it) => {
@@ -195,10 +196,10 @@ function renderListaPedidos(pedidos) {
             <span class="order-table">Mesa ${mesa}</span>
             <span class="order-time">${hora}</span>
             ${prioridadTag}
-            <span class="ml-auto text-sm text-gray-600">Estado: ${displayEstado(estado)}</span>
+            <span class="ml-auto text-sm" style="color: var(--text-secondary);">Estado: ${displayEstado(estado)}</span>
           </div>
           <div class="dish-list mt-3 divide-y">
-            ${itemsHtml || '<div class="text-gray-500">Sin items</div>'}
+            ${itemsHtml || '<div style="color: var(--text-secondary);">Sin items</div>'}
           </div>
           ${botonesHtml}
         </div>
@@ -294,7 +295,7 @@ function setLoading(v) {
   loading = v;
   const cont = $('listaPedidos');
   if (v && cont) {
-    cont.innerHTML = '<div class="m-5 p-5 bg-white rounded shadow text-gray-600">Cargando...</div>';
+    cont.innerHTML = '<div class="m-5 p-5 rounded" style="background: var(--card-bg); color: var(--text-secondary); box-shadow: var(--card-shadow);">Cargando...</div>';
   }
 }
 
@@ -308,11 +309,8 @@ function aplicarFiltro(pedidos) {
 function activarBoton(id, activo) {
   const el = $(id);
   if (!el) return;
-  el.classList.toggle('bg-blue-600', activo);
-  el.classList.toggle('text-white', activo);
-  el.classList.toggle('bg-white', !activo);
-  el.classList.toggle('text-blue-600', !activo);
-  el.classList.toggle('border-blue-600', !activo);
+  el.classList.toggle('active', activo);
+  el.setAttribute('aria-pressed', String(activo));
 }
 
 function syncFilterButtons() {

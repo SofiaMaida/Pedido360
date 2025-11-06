@@ -141,14 +141,14 @@ const showResult = (visible) => {
 };
 
 const renderLoading = () => {
-  resultMessage.innerHTML = `<p class="text-gray-600">Buscando pedido...</p>`;
+  resultMessage.innerHTML = `<p class="text-secondary-var">Buscando pedido...</p>`;
   infoBox.innerHTML = `
     <div class="space-y-4 animate-pulse">
-      <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-      <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-      <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+      <div class="h-4 skeleton rounded w-3/4"></div>
+      <div class="h-4 skeleton rounded w-1/2"></div>
+      <div class="h-4 skeleton rounded w-2/3"></div>
+      <div class="h-4 skeleton rounded w-1/2"></div>
+      <div class="h-4 skeleton rounded w-1/3"></div>
     </div>
   `;
 
@@ -206,70 +206,70 @@ const renderPedido = (data) => {
 
   infoBox.innerHTML = `
     <div class="space-y-4">
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-blue-50 rounded-lg">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 info-card">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-blue-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm font-bold">#</span>
         </div>
         <div>
           <p class="text-sm text-gray-600">ID del pedido</p>
-          <p class="font-semibold text-gray-800">${safeId}</p>
+          <p class="font-semibold text-primary-var">${safeId}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-green-50 rounded-lg">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 info-card">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-green-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">📊</span>
         </div>
         <div>
           <p class="text-sm text-gray-600">Estado actual</p>
-          <p class="font-semibold text-gray-800">${safeEstado}</p>
+          <p class="font-semibold text-primary-var">${safeEstado}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-purple-50 rounded-lg">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 info-card">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-purple-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">📅</span>
         </div>
         <div>
           <p class="text-sm text-gray-600">Fecha de creación</p>
-          <p class="font-semibold text-gray-800">${data.creadoEn ? new Date(data.creadoEn).toLocaleString("es-AR") : "-"}</p>
+          <p class="font-semibold text-primary-var">${data.creadoEn ? new Date(data.creadoEn).toLocaleString("es-AR") : "-"}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-orange-50 rounded-lg">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 info-card">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-orange-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">📝</span>
         </div>
         <div>
           <p class="text-sm text-gray-600">Descripción</p>
-          <p class="font-semibold text-gray-800">${safeDescripcion}</p>
+          <p class="font-semibold text-primary-var">${safeDescripcion}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 bg-red-50 rounded-lg">
+      <div class="w-full flex items-center space-x-3 p-4 lg:p-5 info-card">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-red-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">💰</span>
         </div>
         <div>
           <p class="text-sm text-gray-600">Total</p>
-          <p class="font-semibold text-gray-800">${formatCurrency(data.total)}</p>
+          <p class="font-semibold text-primary-var">${formatCurrency(data.total)}</p>
         </div>
       </div>
 
-      <div class="w-full flex items-start space-x-3 p-4 lg:p-5 bg-yellow-50 rounded-lg">
+      <div class="w-full flex items-start space-x-3 p-4 lg:p-5 info-card">
         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-yellow-500 rounded-full flex items-center justify-center">
           <span class="text-white text-sm">ID</span>
         </div>
         <div class="flex-1 min-w-0">
           <p class="text-sm text-gray-600">Items</p>
-          <div class="font-semibold text-gray-800 space-y-1">
+          <div class="font-semibold text-primary-var space-y-1">
             ${(Array.isArray(data.items) && data.items.length) ? data.items.map(it => {
               const n = escapeHtml(it?.nombre ?? "");
               const c = Number(it?.cantidad) || 1;
               const p = Number(it?.precioUnitario) || 0;
               const subtotal = formatCurrency(c * p);
-              return `<div class=\"flex justify-between gap-3\"><span class=\"truncate\">${n} x ${c}</span><span class=\"text-gray-600\">${subtotal}</span></div>`;
-            }).join("") : '<span class="text-gray-500 font-normal">Sin items</span>'}
+              return `<div class=\"flex justify-between gap-3\"><span class=\"truncate\">${n} x ${c}</span><span class=\"text-secondary-var\">${subtotal}</span></div>`;
+            }).join("") : '<span class="text-secondary-var font-normal">Sin items</span>'}
           </div>
         </div>
       </div>
@@ -277,7 +277,7 @@ const renderPedido = (data) => {
   `;
 
   const timelineContent = estados.map((estado) => {
-    let circleClass = "border-gray-300 bg-white";
+    let dotClass = "";
     let labelClass = "text-gray-600";
 
     const mapHoraKey = {
@@ -309,19 +309,19 @@ const renderPedido = (data) => {
     }
 
     if (estado.clave === data.estadoActual) {
-      circleClass = "border-purple-500 bg-purple-500";
+      dotClass = "active";
       labelClass = "text-purple-600 font-semibold";
     } else if (hora && hora !== '--') {
-      circleClass = "border-green-500 bg-green-500";
+      dotClass = "success";
       labelClass = "text-green-600 font-semibold";
     }
 
     return `
       <div class="relative pl-10">
-        <div class="absolute -left-[29px] top-2 w-5 h-5 rounded-full border-4 ${circleClass}"></div>
-        <div class="bg-gray-50 rounded-lg p-4 lg:p-5 shadow-sm">
+        <div class="absolute -left-[29px] top-2 timeline-dot ${dotClass}"></div>
+        <div class="timeline-card p-4 lg:p-5">
           <p class="text-sm ${labelClass}">${estado.texto}</p>
-          <p class="text-xs text-gray-500 mt-1">${timeLabel}</p>
+          <p class="text-xs timeline-time mt-1">${timeLabel}</p>
         </div>
       </div>
     `;
@@ -375,9 +375,9 @@ const renderPedido = (data) => {
       return `
         <div class="relative pl-10">
           <div class="absolute -left-[29px] top-2 w-5 h-5 rounded-full border-4 ${circleClass}"></div>
-          <div class="bg-gray-50 rounded-lg p-4 lg:p-5 shadow-sm">
+          <div class="timeline-card p-4 lg:p-5">
             <p class="text-sm ${labelClass}">${estado.texto}</p>
-            <p class="text-xs text-gray-500 mt-1">${timeLabel}</p>
+            <p class="text-xs timeline-time mt-1">${timeLabel}</p>
           </div>
         </div>
       `;

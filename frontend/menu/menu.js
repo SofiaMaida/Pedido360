@@ -143,6 +143,24 @@ function renderItems(items) {
       </div>
     `;
 
+    // Keep only one speaker button per card (title+desc+price)
+    try {
+      const speakButtons = card.querySelectorAll('button');
+      if (speakButtons && speakButtons.length) {
+        const finalBtn = speakButtons[speakButtons.length - 1];
+        for (let i = 0; i < speakButtons.length - 1; i++) {
+          speakButtons[i].remove();
+        }
+        finalBtn.removeAttribute('onclick');
+        const nameText = typeof item.nombre === 'string' ? item.nombre : '';
+        const descText = typeof item.descripcion === 'string' ? item.descripcion : '';
+        const speak = `${nameText}. ${descText}. Precio: ${price}`.replace(/\s+/g, ' ').trim();
+        finalBtn.addEventListener('click', () => {
+          if (window.ttsSpeakText) window.ttsSpeakText(speak);
+        });
+      }
+    } catch (e) {}
+
     $menu.appendChild(card);
   });
 }

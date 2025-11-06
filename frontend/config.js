@@ -1,4 +1,3 @@
-window.API_BASE = 'https://hhjlmc50b2.execute-api.us-east-1.amazonaws.com';// REST API base (API Gateway o similar)
 window.API_BASE =
   window.API_BASE ||
   localStorage.getItem('API_BASE') ||

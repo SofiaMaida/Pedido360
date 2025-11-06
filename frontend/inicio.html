@@ -87,6 +87,42 @@
           <span class="text-sm" style="color: var(--footer-text-muted);">📍 Av. Corrientes 1234, CABA</span>
         </div>
       </div>
-    </footer>
-  </body>
+  </footer>
+  <script>
+    (function(){
+      try {
+        // Quitar altavoces de subtítulos
+        document.querySelectorAll("button[onclick=\"ttsSpeakById('inicioSubtitle')\"], button[onclick=\"ttsSpeakById('inicioDesc')\"]").forEach(btn => btn.remove());
+
+        // Unificar: botón del título principal lee título + subtítulo
+        const btnHero = document.querySelector("button[onclick=\"ttsSpeakById('inicioTitle')\"]");
+        if (btnHero) {
+          btnHero.removeAttribute('onclick');
+          btnHero.addEventListener('click', () => {
+            const t = document.getElementById('inicioTitle')?.innerText || '';
+            const s = document.getElementById('inicioSubtitle')?.innerText || '';
+            if (window.ttsSpeakText) window.ttsSpeakText(`${t}. ${s}`.trim());
+          });
+          btnHero.setAttribute('aria-label', 'Escuchar título y subtítulo');
+          btnHero.setAttribute('title', 'Escuchar título y subtítulo');
+        }
+
+        // Unificar: botón del segundo título lee título + subtítulo
+        const btnWelcome = document.querySelector("button[onclick=\"ttsSpeakById('inicioWelcome')\"]");
+        if (btnWelcome) {
+          btnWelcome.removeAttribute('onclick');
+          btnWelcome.addEventListener('click', () => {
+            const t = document.getElementById('inicioWelcome')?.innerText || '';
+            const s = document.getElementById('inicioDesc')?.innerText || '';
+            if (window.ttsSpeakText) window.ttsSpeakText(`${t}. ${s}`.trim());
+          });
+          btnWelcome.setAttribute('aria-label', 'Escuchar título y subtítulo');
+          btnWelcome.setAttribute('title', 'Escuchar título y subtítulo');
+        }
+      } catch (e) {
+        // no-op
+      }
+    })();
+  </script>
+</body>
 </html>

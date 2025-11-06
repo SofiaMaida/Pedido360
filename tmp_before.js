@@ -1,0 +1,1 @@
+            <p class="text-gray-600 text-sm">© Pedido360. Todos los derechos reservados.</p>

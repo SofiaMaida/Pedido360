@@ -186,57 +186,6 @@ Content-Type: application/json
   "orden": 4
 }
 
-### Parrillada para 2 (Platos principales)
-POST {{api}}/menu/items
-Content-Type: application/json
-
-{
-  "categoria": "{{idPlatos}}",
-  "nombre": "Parrillada para 2",
-  "descripcion": "Surtido de carnes a la parrilla para 2 personas",
-  "precio": 4800,
-  "imageUrl": "https://pedido360-menu-images.s3.us-east-1.amazonaws.com/parrillap2.png",
-  "orden": 2
-}
-
-### Espaguetis a la boloñesa (Platos principales)
-POST {{api}}/menu/items
-Content-Type: application/json
-
-{
-  "categoria": "{{idPlatos}}",
-  "nombre": "Espaguetis a la boloñesa",
-  "descripcion": "Pasta con salsa boloñesa casera",
-  "precio": 4200,
-  "imageUrl": "https://pedido360-menu-images.s3.us-east-1.amazonaws.com/espaguetisalabolog.png",
-  "orden": 3
-}
-
-### Hamburguesa completa (Platos principales)
-POST {{api}}/menu/items
-Content-Type: application/json
-
-{
-  "categoria": "{{idPlatos}}",
-  "nombre": "Hamburguesa completa",
-  "descripcion": "Con queso, lechuga, tomate y papas fritas",
-  "precio": 4000,
-  "imageUrl": "https://pedido360-menu-images.s3.us-east-1.amazonaws.com/hamburguesas.jpg",
-  "orden": 4
-}
-
-### Pizza muzzarella (Platos principales)
-POST {{api}}/menu/items
-Content-Type: application/json
-
-{
-  "categoria": "{{idPlatos}}",
-  "nombre": "Pizza con Peperoni",
-  "descripcion": "Pizza a la piedra con muzzarella y peperoni, 8 porciones",
-  "precio": 3800,
-  "imageUrl": "https://pedido360-menu-images.s3.us-east-1.amazonaws.com/pizza.png",
-  "orden": 5
-}
 
 ########## VERIFICACIONES ##########
 
@@ -251,3 +200,4 @@ GET {{api}}/menu/items?categoryId={{idPlatos}}
 
 ### Buscar por texto (subcadena, p.ej. 'mila' o 'empan')
 GET {{api}}/menu/items?q=mila
+

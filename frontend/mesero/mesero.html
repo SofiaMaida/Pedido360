@@ -7,6 +7,10 @@
     <title>Pedido360</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../theme.css" />
+    <style>
+      .quick-link { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); transition: background-color .2s ease, border-color .2s ease, transform .2s ease; display: inline-block; }
+      .quick-link:hover { background: var(--bg-tertiary); transform: translateY(-1px); }
+    </style>
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <script src="../config.js"></script>
     <script src="../theme.js"></script>
@@ -76,19 +80,19 @@
   <!-- Panel de accesos rápidos -->
   <aside class="rounded-2xl shadow-lg p-6 flex flex-col gap-4 md:w-80" style="background: var(--card-bg);">
     <a href="./pedidos-mesero.html" 
-       class="w-full py-5 rounded-lg text-center font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 text-lg transition">
+       class="w-full py-5 rounded-lg text-center font-semibold quick-link text-lg transition" style="color:#3b82f6;">
       📋 Pedidos asignados
     </a>
     <a href="./mesas.html"
-       class="w-full py-5 rounded-lg text-center font-semibold text-green-700 bg-green-50 hover:bg-green-100 text-lg transition">
+       class="w-full py-5 rounded-lg text-center font-semibold quick-link text-lg transition" style="color:#10b981;">
       🍽️ Mesas
     </a>
     <a href="/frontend/menu/menu.html"
-       class="w-full py-5 rounded-lg text-center font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 text-lg transition">
+       class="w-full py-5 rounded-lg text-center font-semibold quick-link text-lg transition" style="color:#8b5cf6;">
       📜 Menú
     </a>
     <a href="./nuevo-pedido.html" 
-       class="w-full py-5 rounded-lg text-center font-semibold text-pink-700 bg-pink-50 hover:bg-pink-100 text-lg transition">
+       class="w-full py-5 rounded-lg text-center font-semibold quick-link text-lg transition" style="color:#db2777;">
       ➕ Nuevo pedido
     </a>
   </aside>
@@ -98,7 +102,7 @@
     <article class="shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300" style="background: var(--card-bg);">
       <div class="text-4xl mb-2">🕒</div>
       <p class="font-semibold" style="color: var(--text-primary);">Pendientes</p>
-      <p class="text-2xl font-bold text-blue-700" id="contadorPendientes">0</p>
+      <p class="text-2xl font-bold" id="contadorPendientes" style="color:#3b82f6;">0</p>
     </article>
 
     <article class="shadow-md rounded-2xl flex flex-col justify-center items-center transition hover:scale-105 hover:shadow-xl duration-300" style="background: var(--card-bg);">

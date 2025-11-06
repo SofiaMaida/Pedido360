@@ -34,6 +34,8 @@
   function initTheme() {
     const theme = getTheme();
     applyTheme(theme);
+    // Ajustar la altura del header para posicionar el toggle
+    updateHeaderHeight();
   }
 
   // Toggle del tema
@@ -54,5 +56,24 @@
   window.toggleTheme = toggleTheme;
   window.getTheme = getTheme;
   window.setTheme = setTheme;
+  
+  // Medir altura del header y exponer como variable CSS
+  function updateHeaderHeight() {
+    try {
+      const header = document.querySelector('header');
+      if (header) {
+        const rect = header.getBoundingClientRect();
+        document.documentElement.style.setProperty('--header-height', rect.height + 'px');
+      } else {
+        document.documentElement.style.setProperty('--header-height', '0px');
+      }
+    } catch (e) {
+      // No bloquear en caso de error
+    }
+  }
+
+  // Actualizar en eventos relevantes
+  window.addEventListener('resize', updateHeaderHeight);
+  window.addEventListener('load', updateHeaderHeight);
 })();
 

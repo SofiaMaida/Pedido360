@@ -81,5 +81,26 @@
     </div>
     <script src="../config.js"></script>
     <script src="login.js"></script>
+    <script>
+      (function(){
+        try {
+          // Eliminar altavoz del subtítulo y hacer que el del título lea ambos
+          const subtitleBtn = document.querySelector("button[onclick=\"ttsSpeakById('loginSubtitle')\"]");
+          if (subtitleBtn) subtitleBtn.remove();
+
+          const titleBtn = document.querySelector("button[onclick=\"ttsSpeakById('loginTitle')\"]");
+          if (titleBtn) {
+            titleBtn.removeAttribute('onclick');
+            titleBtn.addEventListener('click', () => {
+              const t = document.getElementById('loginTitle')?.innerText || '';
+              const s = document.getElementById('loginSubtitle')?.innerText || '';
+              if (window.ttsSpeakText) window.ttsSpeakText(`${t}. ${s}`.trim());
+            });
+            titleBtn.setAttribute('aria-label', 'Escuchar título y subtítulo');
+            titleBtn.setAttribute('title', 'Escuchar título y subtítulo');
+          }
+        } catch (e) { /* no-op */ }
+      })();
+    </script>
   </body>
 </html>

@@ -45,13 +45,35 @@ input{
     padding: 10px; /*Crea un relleno*/
     margin-bottom: 10px; /*Crea un margen desde la parte inferior*/
     border: 1px solid var(--input-border); /*Crea un borde al contendor*/
-    background-color: var(--input-bg);
+    background-color: var(--input-bg) !important; /* Forzar color en light/dark */
     color: var(--text-primary);
 }
 
 input:focus {
     border-color: var(--input-focus-border);
     outline: none;
+}
+
+/* Placeholder y focus ring coherentes con el tema */
+input::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+/* Evitar fondo blanco de autocompletado (Chrome/Edge/Safari) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-primary);
+    box-shadow: 0 0 0px 1000px var(--input-bg) inset;
+    transition: background-color 9999s ease-out 0s;
+    caret-color: var(--text-primary);
+    border: 1px solid var(--input-border);
+}
+
+/* Indicar a los navegadores que use controles oscuros dentro del contenedor */
+[data-theme="dark"] .contenedor {
+    color-scheme: dark;
 }
 
 button{

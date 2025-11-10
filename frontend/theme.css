@@ -49,6 +49,9 @@
   /* Botones */
   --btn-primary: #007BFF;
   --btn-primary-hover: #0056b3;
+
+  /* Altura dinámica del header (para ubicar el toggle) */
+  --header-height: 0px;
 }
 
 /* Variables de tema oscuro */
@@ -105,7 +108,8 @@
 /* Estilos para el botón de toggle de tema */
 .theme-toggle {
   position: fixed;
-  top: 20px;
+  /* Ubicar unos px por debajo del header */
+  top: calc(var(--header-height, 0px) + 12px);
   right: 20px;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.9);

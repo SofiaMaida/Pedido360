@@ -1,0 +1,75 @@
+useDotenv: true
+service: pedido360-back
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ${env:AWS_REGION, 'us-east-1'}
+  stage: ${env:STAGE, 'prod'}
+  timeout: 29
+  memorySize: 512
+  iam:
+    role: arn:aws:iam::905418401149:role/LabRole
+  environment:
+    NODE_OPTIONS: '--enable-source-maps'
+    FRONT_ORIGIN: ${env:FRONT_ORIGIN, 'https://pedido360-front.s3.us-east-1.amazonaws.com'}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+    DB_CLUSTER: ${env:DB_CLUSTER}
+    DB_NAME: ${env:DB_NAME}
+    PUBLIC_BASE_URL: ${env:PUBLIC_BASE_URL}
+  httpApi:
+    cors:
+      allowedOrigins:
+        - ${env:FRONT_ORIGIN, 'https://pedido360-front.s3.us-east-1.amazonaws.com'}
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowCredentials: true
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi:
+          path: /
+          method: ANY
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+custom:
+  dotenv:
+    path: .env
+  serverless-offline:
+    httpPort: 3000
+    noPrependStageInUrl: true
+
+package:
+  patterns:
+    - '!**/*'
+    - 'handler.js'
+    - 'app.js'
+    - 'index.js'
+    - 'config.js'
+    - 'routes/**'
+    - 'controller/**'
+    - 'services/**'
+    - 'repository/**'
+    - 'src/**'
+    - 'database/**'
+    - 'public/**'
+    - 'node_modules/**'
+    - 'package.json'
+    - 'package-lock.json'

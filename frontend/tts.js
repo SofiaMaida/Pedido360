@@ -1,9 +1,50 @@
 (function(){
+  // Función para convertir precios a formato legible en español argentino
+  function convertPriceForTTS(text) {
+    if (!text) return text;
+    
+    // Reemplazar precios formateados con ARS$ o $ seguido de números
+    // Patrón: $123, $1.234,56, ARS$123, etc.
+    return String(text)
+      // Reemplazar ARS$ seguido de números
+      .replace(/ARS\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g, (match, amount) => {
+        const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
+        if (isNaN(num)) return match;
+        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+      })
+      // Reemplazar $ seguido de números (formato argentino: 1.234,56)
+      .replace(/\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g, (match, amount) => {
+        const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
+        if (isNaN(num)) return match;
+        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+      })
+      // Reemplazar $ seguido de números (formato internacional: 1,234.56)
+      .replace(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g, (match, amount) => {
+        const num = parseFloat(amount.replace(/,/g, ''));
+        if (isNaN(num)) return match;
+        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+      })
+      // Reemplazar "S/" (soles peruanos) si existe
+      .replace(/S\/\s*(\d+(?:[.,]\d+)?)/g, (match, amount) => {
+        const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
+        if (isNaN(num)) return match;
+        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+      })
+      // Reemplazar "USD" o "dólares" si existe
+      .replace(/(USD|dólares?)\s*(\d+(?:[.,]\d+)?)/gi, (match, currency, amount) => {
+        const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
+        if (isNaN(num)) return match;
+        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+      });
+  }
+  
   function speak(text, opts={}){
     if (!text) return;
     try {
       window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
+      // Convertir precios antes de leer
+      const processedText = convertPriceForTTS(String(text));
+      const utter = new SpeechSynthesisUtterance(processedText);
       utter.lang = opts.lang || 'es-AR';
       utter.rate = opts.rate || 0.9;
       utter.pitch = opts.pitch || 1;

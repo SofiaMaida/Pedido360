@@ -35,6 +35,12 @@ function formatoHora(fechaIso) {
   }
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 async function apiGet(path) {
   const url = `${API_BASE}${path}`;
   const res = await fetch(url);
@@ -189,6 +195,17 @@ function renderListaPedidos(pedidos) {
         </div>
       `;
 
+      // Notas para cocina en rojo
+      const notas = pedido.descripcion || pedido.notas || '';
+      const notasHtml = notas.trim() 
+        ? `<div class="mt-3 p-3 rounded-lg border-2 border-red-500 bg-red-50" style="background-color: #fef2f2; border-color: #ef4444;">
+            <div class="flex items-start gap-2">
+              <span class="text-red-600 font-semibold text-sm">📝 Notas para cocina:</span>
+              <span class="text-red-700 font-medium text-sm flex-1">${escapeHtml(notas)}</span>
+            </div>
+          </div>`
+        : '';
+
       card.innerHTML = `
         <div class="orden w-full">
           <div class="order-header flex gap-3 items-center flex-wrap">
@@ -201,6 +218,7 @@ function renderListaPedidos(pedidos) {
           <div class="dish-list mt-3 divide-y">
             ${itemsHtml || '<div style="color: var(--text-secondary);">Sin items</div>'}
           </div>
+          ${notasHtml}
           ${botonesHtml}
         </div>
       `;

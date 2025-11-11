@@ -174,7 +174,7 @@ async function fetchJSON(url, options) {
 function formatPrice(value) {
   const number = Number(value);
   if (Number.isNaN(number)) return "";
-  return `$${number.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return number.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
 }
 
 function escapeHtml(text) {

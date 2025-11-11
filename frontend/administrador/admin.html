@@ -12,6 +12,13 @@
     body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial; }
     .card-hover:hover { transform: translateY(-5px); transition: transform 0.2s ease-in-out; }
   </style>
+  <script>
+    // Aplicar tema inmediatamente para evitar flash de contenido sin tema
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
   <script src="../theme.js"></script>
   <script src="../tts.js"></script>
 </head>

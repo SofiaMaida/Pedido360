@@ -6,10 +6,28 @@
     <title>Gestión de mesas | Pedido360</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
-      <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../theme.css" />
+    <style>
+      body { background: var(--gradient-bg); color: var(--text-primary); }
+      .bg-white, .bg-white\/80, .bg-white\/90 { background-color: var(--card-bg) !important; }
+      .text-gray-800, .text-gray-900 { color: var(--text-primary) !important; }
+      .text-gray-600, .text-gray-700, .text-gray-500 { color: var(--text-secondary) !important; }
+      .border-gray-100, .border-gray-200 { border-color: var(--border-color) !important; }
+      #userDropdown { background: var(--card-bg) !important; color: var(--text-primary) !important; border: 1px solid var(--border-color) !important; }
+    </style>
+    <script>
+      // Aplicar tema inmediatamente para evitar flash de contenido sin tema
+      (function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
+    <script src="../theme.js"></script>
     <script src="../config.js"></script>
   </head>
-  <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex flex-col font-[Inter]">
+  <body class="min-h-screen flex flex-col font-[Inter]">
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
     <!-- Barra superior -->
     <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       <div class="flex items-center gap-3">

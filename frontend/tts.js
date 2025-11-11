@@ -10,31 +10,31 @@
       .replace(/ARS\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g, (match, amount) => {
         const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
         if (isNaN(num)) return match;
-        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+        return `${num.toLocaleString('es-AR')} pesos`;
       })
       // Reemplazar $ seguido de números (formato argentino: 1.234,56)
       .replace(/\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g, (match, amount) => {
         const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
         if (isNaN(num)) return match;
-        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+        return `${num.toLocaleString('es-AR')} pesos`;
       })
       // Reemplazar $ seguido de números (formato internacional: 1,234.56)
       .replace(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g, (match, amount) => {
         const num = parseFloat(amount.replace(/,/g, ''));
         if (isNaN(num)) return match;
-        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+        return `${num.toLocaleString('es-AR')} pesos`;
       })
       // Reemplazar "S/" (soles peruanos) si existe
       .replace(/S\/\s*(\d+(?:[.,]\d+)?)/g, (match, amount) => {
         const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
         if (isNaN(num)) return match;
-        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+        return `${num.toLocaleString('es-AR')} pesos`;
       })
       // Reemplazar "USD" o "dólares" si existe
       .replace(/(USD|dólares?)\s*(\d+(?:[.,]\d+)?)/gi, (match, currency, amount) => {
         const num = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
         if (isNaN(num)) return match;
-        return `${num.toLocaleString('es-AR')} pesos argentinos`;
+        return `${num.toLocaleString('es-AR')} pesos`;
       });
   }
   

@@ -133,27 +133,29 @@ function renderListaPedidos(pedidos) {
     .sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0))
     .forEach((pedido) => {
       const prioridad = (pedido.prioridad || '').toLowerCase();
+      const priorityClass = prioridad === 'alta'
+        ? 'priority-badge priority-alta'
+        : prioridad === 'media'
+          ? 'priority-badge priority-media'
+          : 'priority-badge priority-baja';
+
       const prioridadTag = prioridad
-        ? `<span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-            prioridad === 'alta' ? 'bg-red-100 text-red-700'
-          : prioridad === 'media' ? 'bg-yellow-100 text-yellow-700'
-          : 'bg-gray-100 text-gray-700'
-          }">Prioridad ${prioridad}</span>`
+        ? `<span class="${priorityClass}">Prioridad ${prioridad}</span>`
         : '';
 
       const mesa = pedido.mesa?.numero ?? '—';
       const hora = formatoHora(pedido.createdAt || pedido.creadoEn);
       const estado = String(pedido.estado || '').toLowerCase();
 
-      const bordeEstado =
-        estado === ESTADOS.listo      ? 'border-l-4 border-green-500'  :
-        estado === ESTADOS.yaCasi     ? 'border-l-4 border-amber-500'  :
-        estado === ESTADOS.preparando ? 'border-l-4 border-yellow-500' :
-                                        'border-l-4 border-gray-300';
+      const borderColor =
+        estado === ESTADOS.listo      ? '#22c55e'  :
+        estado === ESTADOS.yaCasi     ? '#f59e0b'  :
+        estado === ESTADOS.preparando ? '#eab308' :
+                                        '#94a3b8';
 
       const card = document.createElement('div');
-      card.className = `flex justify-between items-start shadow-md p-5 rounded-lg w-full ${bordeEstado}`;
-      card.setAttribute('style', 'background: var(--card-bg); color: var(--text-primary); box-shadow: var(--card-shadow);');
+      card.className = 'flex justify-between items-start shadow-md p-5 rounded-lg w-full pedido-card';
+      card.style.borderLeft = `4px solid ${borderColor}`;
 
       const items = Array.isArray(pedido.items) ? pedido.items : [];
       const itemsHtml = items.map((it) => {
@@ -161,20 +163,22 @@ function renderListaPedidos(pedidos) {
         const nombre = it.menuItem?.nombre || it.nombre || 'Item';
         const s      = String(it.estado || estado);
 
-        let badgeClass = 'bg-gray-100 text-gray-700';
-        if (s === ESTADOS.listo)      badgeClass = 'bg-green-100 text-green-700';
-        else if (s === ESTADOS.yaCasi) badgeClass = 'bg-amber-100 text-amber-700';
-        else if (s === ESTADOS.preparando) badgeClass = 'bg-yellow-100 text-yellow-700';
-
         const label = s === ESTADOS.yaCasi ? 'ya casi'
                     : s === ESTADOS.listo  ? 'listo'
                     : s;
 
+        let statusClass = 'pendiente';
+        if (s === ESTADOS.listo) statusClass = 'listo';
+        else if (s === ESTADOS.yaCasi) statusClass = 'ya-casi';
+        else if (s === ESTADOS.preparando) statusClass = 'preparando';
+
         return `
-          <div class="dish-item flex items-center gap-2 py-1">
-            <span class="dish-quantity inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs">${qty}</span>
-            <span class="dish-name">${nombre}</span>
-            <span class="dish-status inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${badgeClass}">${label}</span>
+          <div class="dish-item">
+            <div class="dish-info">
+              <span class="dish-quantity">${qty}</span>
+              <span class="dish-name">${nombre}</span>
+            </div>
+            <span class="dish-status ${statusClass}">${label}</span>
           </div>`;
       }).join('');
 
@@ -198,10 +202,10 @@ function renderListaPedidos(pedidos) {
       // Notas para cocina en rojo
       const notas = pedido.descripcion || pedido.notas || '';
       const notasHtml = notas.trim() 
-        ? `<div class="mt-3 p-3 rounded-lg border-2 border-red-500 bg-red-50" style="background-color: #fef2f2; border-color: #ef4444;">
+        ? `<div class="mt-3 p-3 nota-cocina">
             <div class="flex items-start gap-2">
-              <span class="text-red-600 font-semibold text-sm">📝 Notas para cocina:</span>
-              <span class="text-red-700 font-medium text-sm flex-1">${escapeHtml(notas)}</span>
+              <span class="text-sm font-semibold" style="color: #fb7185;">📝 Notas para cocina:</span>
+              <span class="text-sm flex-1" style="color: var(--text-primary);">${escapeHtml(notas)}</span>
             </div>
           </div>`
         : '';

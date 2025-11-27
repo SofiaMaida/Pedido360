@@ -114,56 +114,74 @@ function renderItems(items) {
     card.style.borderColor = "var(--border-color)";
 
     const imageUrl = item.imageUrl || PLACEHOLDER_IMAGE;
-    const description = item.descripcion ? escapeHtml(item.descripcion) : "Sin descripción";
+    const rawDescription = typeof item.descripcion === 'string' && item.descripcion.trim() ? item.descripcion : "Sin descripción";
+    const description = escapeHtml(rawDescription);
     const price = formatPrice(item.precio);
-    const itemId = `menu-item-${index}`;
-    const descId = `menu-desc-${index}`;
-    const priceId = `menu-price-${index}`;
+    const priceSpeech = formatPriceSpeech(item.precio);
+    const rawName = typeof item.nombre === 'string' ? item.nombre : '';
+    const speakText = `${rawName}. ${rawDescription}. Precio: ${priceSpeech} pesos`.replace(/\s+/g, ' ').trim();
 
-    card.innerHTML = `
-      <div class="relative overflow-hidden">
-        <img src="${imageUrl}" alt="${escapeHtml(item.nombre)}" class="w-full h-56 object-cover transition-transform duration-300 hover:scale-110" />
-      </div>
-      <div class="p-6 flex flex-col flex-1">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <h3 id="${itemId}" class="text-xl font-bold flex-1" style="color: var(--text-primary);">${escapeHtml(item.nombre)}</h3>
-          <button type="button" onclick="ttsSpeakById('${itemId}')" class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Escuchar nombre del plato" title="Escuchar nombre del plato">🔊</button>
-        </div>
-        <div class="flex items-start gap-2 mb-4">
-          <p id="${descId}" class="text-sm flex-1 h-12 overflow-hidden" style="color: var(--text-secondary);">${description}</p>
-          <button type="button" onclick="ttsSpeakById('${descId}')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1 mt-1" aria-label="Escuchar descripción" title="Escuchar descripción">🔊</button>
-        </div>
-        <div class="flex justify-end items-center gap-2 mt-auto">
-          <span id="${priceId}" class="text-2xl font-bold" style="color: var(--accent);">${price}</span>
-          <button type="button" onclick="ttsSpeakById('${priceId}')" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Escuchar precio" title="Escuchar precio">🔊</button>
-        </div>
-        <div class="mt-2 flex justify-center">
-          <button type="button" onclick="ttsSpeakText('${escapeHtml(item.nombre)}. ${escapeHtml(description)}. Precio: ${price}')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1" aria-label="Escuchar información completa" title="Escuchar información completa">🔊</button>
-        </div>
-      </div>
-    `;
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'relative overflow-hidden';
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = escapeHtml(item.nombre || 'Plato');
+    img.className = 'w-full h-56 object-cover transition-transform duration-300 hover:scale-110';
+    imageWrapper.appendChild(img);
 
-    // Keep only one speaker button per card (title+desc+price)
-    try {
-      const speakButtons = card.querySelectorAll('button');
-      if (speakButtons && speakButtons.length) {
-        const finalBtn = speakButtons[speakButtons.length - 1];
-        for (let i = 0; i < speakButtons.length - 1; i++) {
-          speakButtons[i].remove();
-        }
-        finalBtn.removeAttribute('onclick');
-        const nameText = typeof item.nombre === 'string' ? item.nombre : '';
-        const descText = typeof item.descripcion === 'string' ? item.descripcion : '';
-        const speak = `${nameText}. ${descText}. Precio: ${price}`.replace(/\s+/g, ' ').trim();
-        finalBtn.addEventListener('click', () => {
-          if (window.ttsSpeakText) window.ttsSpeakText(speak);
-        });
-      }
-    } catch (e) {}
+    const body = document.createElement('div');
+    body.className = 'p-6 flex flex-col flex-1';
+
+    const infoRow = document.createElement('div');
+    infoRow.className = 'flex items-start gap-2 mb-4';
+
+    const textBox = document.createElement('div');
+    textBox.className = 'flex-1';
+
+    const titleEl = document.createElement('h3');
+    titleEl.className = 'text-xl font-bold mb-1';
+    titleEl.style.color = 'var(--text-primary)';
+    titleEl.textContent = rawName;
+
+    const descEl = document.createElement('p');
+    descEl.className = 'text-sm h-12 overflow-hidden';
+    descEl.style.color = 'var(--text-secondary)';
+    descEl.innerHTML = description;
+
+    textBox.appendChild(titleEl);
+    textBox.appendChild(descEl);
+
+    const speakBtn = document.createElement('button');
+    speakBtn.type = 'button';
+    speakBtn.className = 'inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-1';
+    speakBtn.setAttribute('aria-label', 'Escuchar información del plato');
+    speakBtn.setAttribute('title', 'Escuchar información del plato');
+    speakBtn.textContent = '🔊';
+    speakBtn.addEventListener('click', () => {
+      if (window.ttsSpeakText) window.ttsSpeakText(speakText);
+    });
+
+    infoRow.appendChild(textBox);
+    infoRow.appendChild(speakBtn);
+
+    const priceRow = document.createElement('div');
+    priceRow.className = 'flex justify-end items-center gap-2 mt-auto';
+    const priceEl = document.createElement('span');
+    priceEl.className = 'text-2xl font-bold';
+    priceEl.style.color = 'var(--accent)';
+    priceEl.textContent = price;
+    priceRow.appendChild(priceEl);
+
+    body.appendChild(infoRow);
+    body.appendChild(priceRow);
+
+    card.appendChild(imageWrapper);
+    card.appendChild(body);
 
     $menu.appendChild(card);
   });
 }
+
 
 async function fetchJSON(url, options) {
   const response = await fetch(url, options);
@@ -175,6 +193,12 @@ function formatPrice(value) {
   const number = Number(value);
   if (Number.isNaN(number)) return "";
   return number.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
+}
+
+function formatPriceSpeech(value) {
+  const number = Number(value);
+  if (Number.isNaN(number)) return "0";
+  return number.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function escapeHtml(text) {

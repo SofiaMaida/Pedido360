@@ -25,7 +25,7 @@ let audioCtx = null;
 // URL de sonido configurable (puedes cambiarla por localStorage o window.NOTIF_SOUND_URL)
 const SOUND_URL =
   (typeof window !== 'undefined' && (window.NOTIF_SOUND_URL || localStorage.getItem('NOTIF_SOUND_URL'))) ||
-  'https://pedido360-menu-images.s3.us-east-1.amazonaws.com/restaurant-bell-101396.mp3';
+  'https://pedido360.s3.us-east-1.amazonaws.com/frontend/restaurant-bell-101396.mp3';
 let ding;
 try {
   ding = new Audio(SOUND_URL);
@@ -211,8 +211,8 @@ const renderPedido = (data) => {
           <span class="text-white text-sm font-bold">#</span>
         </div>
         <div>
-          <p class="text-sm text-gray-600">ID del pedido</p>
-          <p class="font-semibold text-primary-var">${safeId}</p>
+          <p class="text-sm" style="color: var(--text-secondary);">ID del pedido</p>
+          <p class="font-semibold" style="color: var(--text-primary);">${safeId}</p>
         </div>
       </div>
 
@@ -221,8 +221,8 @@ const renderPedido = (data) => {
           <span class="text-white text-sm">📊</span>
         </div>
         <div>
-          <p class="text-sm text-gray-600">Estado actual</p>
-          <p class="font-semibold text-primary-var">${safeEstado}</p>
+          <p class="text-sm" style="color: var(--text-secondary);">Estado actual</p>
+          <p class="font-semibold" style="color: var(--text-primary);">${safeEstado}</p>
         </div>
       </div>
 
@@ -231,8 +231,8 @@ const renderPedido = (data) => {
           <span class="text-white text-sm">📅</span>
         </div>
         <div>
-          <p class="text-sm text-gray-600">Fecha de creación</p>
-          <p class="font-semibold text-primary-var">${data.creadoEn ? new Date(data.creadoEn).toLocaleString("es-AR") : "-"}</p>
+          <p class="text-sm" style="color: var(--text-secondary);">Fecha de creación</p>
+          <p class="font-semibold" style="color: var(--text-primary);">${data.creadoEn ? new Date(data.creadoEn).toLocaleString("es-AR") : "-"}</p>
         </div>
       </div>
 
@@ -241,8 +241,8 @@ const renderPedido = (data) => {
           <span class="text-white text-sm">📝</span>
         </div>
         <div>
-          <p class="text-sm text-gray-600">Descripción</p>
-          <p class="font-semibold text-primary-var">${safeDescripcion}</p>
+          <p class="text-sm" style="color: var(--text-secondary);">Descripción</p>
+          <p class="font-semibold" style="color: var(--text-primary);">${safeDescripcion}</p>
         </div>
       </div>
 
@@ -251,8 +251,8 @@ const renderPedido = (data) => {
           <span class="text-white text-sm">💰</span>
         </div>
         <div>
-          <p class="text-sm text-gray-600">Total</p>
-          <p class="font-semibold text-primary-var">${formatCurrency(data.total)}</p>
+          <p class="text-sm" style="color: var(--text-secondary);">Total</p>
+          <p class="font-semibold" style="color: var(--text-primary);">${formatCurrency(data.total)}</p>
         </div>
       </div>
 
@@ -261,14 +261,14 @@ const renderPedido = (data) => {
           <span class="text-white text-sm">ID</span>
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm text-gray-600">Items</p>
-          <div class="font-semibold text-primary-var space-y-1">
+          <p class="text-sm" style="color: var(--text-secondary);">Items</p>
+          <div class="font-semibold space-y-1" style="color: var(--text-primary);">
             ${(Array.isArray(data.items) && data.items.length) ? data.items.map(it => {
               const n = escapeHtml(it?.nombre ?? "");
               const c = Number(it?.cantidad) || 1;
               const p = Number(it?.precioUnitario) || 0;
               const subtotal = formatCurrency(c * p);
-              return `<div class=\"flex justify-between gap-3\"><span class=\"truncate\">${n} x ${c}</span><span class=\"text-secondary-var\">${subtotal}</span></div>`;
+              return `<div class=\"flex justify-between gap-3\"><span class=\"truncate\">${n} x ${c}</span><span style=\"color: var(--text-secondary);\">${subtotal}</span></div>`;
             }).join("") : '<span class="text-secondary-var font-normal">Sin items</span>'}
           </div>
         </div>
@@ -278,7 +278,7 @@ const renderPedido = (data) => {
 
   const timelineContent = estados.map((estado) => {
     let dotClass = "";
-    let labelClass = "text-gray-600";
+    let labelColor = "var(--text-secondary)";
 
     const mapHoraKey = {
       'pendiente': 'recibido',
@@ -310,18 +310,18 @@ const renderPedido = (data) => {
 
     if (estado.clave === data.estadoActual) {
       dotClass = "active";
-      labelClass = "text-purple-600 font-semibold";
+      labelColor = "var(--brand)";
     } else if (hora && hora !== '--') {
       dotClass = "success";
-      labelClass = "text-green-600 font-semibold";
+      labelColor = "#22c55e";
     }
 
     return `
       <div class="relative pl-10">
         <div class="absolute -left-[29px] top-2 timeline-dot ${dotClass}"></div>
         <div class="timeline-card p-4 lg:p-5">
-          <p class="text-sm ${labelClass}">${estado.texto}</p>
-          <p class="text-xs timeline-time mt-1">${timeLabel}</p>
+          <p class="text-sm font-semibold" style="color: ${labelColor};">${estado.texto}</p>
+          <p class="text-xs timeline-time mt-1" style="color: var(--text-secondary);">${timeLabel}</p>
         </div>
       </div>
     `;
@@ -440,6 +440,7 @@ const startPolling = () => {
 // --- Estado inicial ---
 if (pedidoId) {
   // Hay ?id=... => mostrar ambos paneles y buscar
+  currentPedidoId = pedidoId;
   fetchPedido(pedidoId);
   startPolling();
 } else {

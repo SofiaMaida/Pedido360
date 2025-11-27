@@ -20,7 +20,7 @@
   </head>
 <body style="background: var(--bg-primary);">
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
-    <div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" style="background: var(--gradient-bg);">
+    <div class="min-h-screen" style="background: var(--gradient-bg);">
         <!-- Admin-style header -->
         <header class="text-white fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 shadow-lg z-20" style="background: var(--gradient-primary);">
             <div class="flex items-center gap-3">
@@ -47,7 +47,10 @@
         <section class="mb-8">
             <div class="p-6 rounded-xl shadow-md" style="background: var(--card-bg);">
                 <div class="flex items-center justify-center">
-                    <h1 id="cocinaTitle" class="text-3xl font-bold text-center" style="color: var(--text-primary);">¡Bienvenido a cocina!</h1>
+                    <h1 id="cocinaTitle" class="text-3xl font-bold text-center flex items-center gap-3 justify-center" style="color: var(--text-primary);">
+                        <span aria-hidden="true" class="text-4xl">👨‍🍳</span>
+                        <span>Cocina en servicio</span>
+                    </h1>
                     <button type="button" aria-label="Leer título" onclick="ttsSpeakById('cocinaTitle')" class="ml-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100">🔊</button>
                 </div>
                 <div class="mt-2 flex items-center justify-center">

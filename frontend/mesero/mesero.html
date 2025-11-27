@@ -68,12 +68,13 @@
       <section class="mb-10">
         <div class="p-6 rounded-xl shadow-md" style="background: var(--card-bg);">
           <div class="flex items-center justify-center">
-            <h1 id="meseroTitle" class="text-3xl font-bold text-center" style="color: var(--text-primary);">
-              ¡Bienvenido al sistema de pedidos!
+            <h1 id="meseroTitle" class="text-3xl font-bold text-center flex items-center gap-3 justify-center" style="color: var(--text-primary);">
+              <span aria-hidden="true" class="text-4xl">🤵‍♂️</span>
+              <span>Estación de servicio</span>
             </h1>
             <button type="button" aria-label="Leer título" onclick="ttsSpeakById('meseroTitle')" class="ml-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100">🔊</button>
           </div>
-          <p id="meseroSubtitle" class="text-center mt-3" style="color: var(--text-secondary);">Supervisa tus pedidos de un vistazo: utiliza las tarjetas resumen para ver pedidos pendientes, en preparación, ya casi y listos en tiempo real.</p>
+          <p id="meseroSubtitle" class="text-center mt-3" style="color: var(--text-secondary);">👋 Buen turno, <span id="nombreUsuario"></span></p>
         </div>
       </section>
 <section class="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-8 items-stretch mb-16">
@@ -129,6 +130,7 @@
 
     <script src="../tts.js"></script>
     <script src="./mesero.js"></script>
+    <script src="../mesero/theme-init.js"></script>
     <script>
       (function(){
         const btn = document.querySelector("button[onclick*=\"ttsSpeakById('meseroTitle')\"]");

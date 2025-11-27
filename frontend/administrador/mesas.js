@@ -1,14 +1,136 @@
 (() => {
   const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://localhost:3000';
-
   const ESTADOS = [
-    { value: 'libre',        label: 'Libre',        cls: 'bg-green-100 text-green-700' },
-    { value: 'ocupada',      label: 'Ocupada',      cls: 'bg-yellow-100 text-yellow-700' },
-    { value: 'reservada',    label: 'Reservada',    cls: 'bg-blue-100 text-blue-700' },
-    { value: 'mantenimiento',label: 'Mantenimiento', cls: 'bg-gray-200 text-gray-600' },
+    { value: 'libre', label: 'Libre', color: '#22c55e' },
+    { value: 'ocupada', label: 'Ocupada', color: '#facc15' },
+    { value: 'reservada', label: 'Reservada', color: '#38bdf8' },
+    { value: 'mantenimiento', label: 'Mantenimiento', color: '#94a3b8' }
   ];
-
   let mesas = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupUserMenu();
+    setupLogout();
+    cargarMesas();
+  });
+
+  function setupUserMenu() {
+    const userMenu = document.getElementById('userMenu');
+    const btn = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+    const chevron = document.getElementById('chevron');
+    const userName = document.getElementById('userName');
+    const userAvatar = document.getElementById('userAvatar');
+    const nombre = localStorage.getItem('usuarioNombre') || 'Administrador';
+    if (userName) userName.textContent = nombre;
+    if (userAvatar) userAvatar.textContent = nombre.trim().split(/\s+/).map(p => p[0]).slice(0,2).join('').toUpperCase();
+    if (btn && userDropdown) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdown.classList.toggle('hidden');
+        const open = !userDropdown.classList.contains('hidden');
+        btn.setAttribute('aria-expanded', String(open));
+        if (chevron) chevron.classList.toggle('rotate-180', open);
+      });
+      document.addEventListener('click', (e) => {
+        if (userMenu && !userMenu.contains(e.target)) {
+          userDropdown.classList.add('hidden');
+          btn.setAttribute('aria-expanded', 'false');
+          if (chevron) chevron.classList.remove('rotate-180');
+        }
+      });
+    }
+  }
+
+  function setupLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('usuarioNombre');
+        localStorage.removeItem('usuarioId');
+        sessionStorage.clear();
+        window.location.href = '../login/login.html';
+      });
+    }
+  }
+
+  const estadoMeta = (estado) => ESTADOS.find(e => e.value === estado) || ESTADOS[0];
+
+  function pintarIcono(iconEl, color) {
+    iconEl.style.color = color;
+    iconEl.style.borderColor = color;
+    iconEl.style.background = `${color}22`;
+  }
+
+  function renderCard(mesa) {
+    const meta = estadoMeta(mesa.estado);
+    const numero = mesa.numero ?? (mesa._id ? String(mesa._id).slice(-4) : 'N/A');
+    const card = document.createElement('article');
+    card.className = 'mesa-card';
+    card.dataset.id = mesa._id || mesa.id || numero;
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="mesa-icon">${numero}</div>
+          <div>
+            <p class="text-xs" style="color: var(--text-secondary);">Mesa</p>
+            <p class="text-lg font-semibold" style="color: var(--text-primary);">${numero}</p>
+          </div>
+        </div>
+        <button class="btn-editar text-sm font-semibold text-indigo-600 hover:text-indigo-500">Cambiar estado</button>
+      </div>
+      <div class="mesa-status" style="color:${meta.color};">
+        <span class="w-3 h-3 rounded-full" style="background:${meta.color};"></span>
+        <span class="mesa-status-text">${meta.label}</span>
+      </div>
+      <div class="mesa-actions">
+        <select class="mesa-select">
+          ${ESTADOS.map(e => `<option value="${e.value}" ${e.value === mesa.estado ? 'selected' : ''}>${e.label}</option>`).join('')}
+        </select>
+        <button class="btn-guardar bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-500">Guardar</button>
+        <button class="btn-cancelar bg-gray-200 text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
+      </div>
+    `;
+
+    const icon = card.querySelector('.mesa-icon');
+    pintarIcono(icon, meta.color);
+
+    const statusText = card.querySelector('.mesa-status-text');
+    const btnEditar = card.querySelector('.btn-editar');
+    const actions = card.querySelector('.mesa-actions');
+    const select = card.querySelector('select');
+
+    btnEditar.addEventListener('click', () => actions.classList.toggle('visible'));
+    card.querySelector('.btn-cancelar').addEventListener('click', () => {
+      actions.classList.remove('visible');
+      select.value = mesa.estado;
+    });
+
+    card.querySelector('.btn-guardar').addEventListener('click', async () => {
+      const nuevo = select.value;
+      try {
+        const res = await fetch(`${API_BASE}/mesas/${card.dataset.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado: nuevo })
+        });
+        if (!res.ok) throw new Error('Error al actualizar mesa');
+        await res.json();
+        mesa.estado = nuevo;
+        const metaActual = estadoMeta(nuevo);
+        statusText.innerHTML = `<span class=\"w-3 h-3 rounded-full\" style=\"background:${metaActual.color};\"></span>${metaActual.label}`;
+        pintarIcono(icon, metaActual.color);
+        actions.classList.remove('visible');
+        actualizarContadores();
+      } catch (error) {
+        console.error('Error al guardar mesa:', error);
+        alert('No se pudo actualizar la mesa. Intente de nuevo.');
+      }
+    });
+
+    return card;
+  }
 
   function actualizarContadores() {
     const total = mesas.length;
@@ -28,168 +150,26 @@
     if (estado) estado.textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR');
   }
 
-  const estadoMeta = (v) => ESTADOS.find(e => e.value === v) || ESTADOS[0];
+  async function cargarMesas() {
+    const grid = document.getElementById('gridMesas');
+    if (!grid) return;
+    grid.innerHTML = '<div class="col-span-full text-center py-6" style="color: var(--text-secondary);">Cargando mesas...</div>';
 
-  function badgeEstado(v){
-    const m = estadoMeta(v);
-    return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${m.cls}">${m.label}</span>`;
-  }
-
-  function selectEstadoHTML(actual){
-    return `
-      <select class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-300">
-        ${ESTADOS.map(e=>`<option value="${e.value}" ${e.value===actual?'selected':''}>${e.label}</option>`).join('')}
-      </select>
-    `;
-  }
-
-  function renderFila(mesa){
-    const canEdit = mesa.hasOwnProperty('editable') ? !!mesa.editable : (mesa.estado !== 'mantenimiento');
-    const rowId = mesa._id || mesa.id || mesa.numero;
-    const numero = mesa.numero || rowId;
-
-    return `
-      <tr data-id="${rowId}">
-        <td class="px-6 py-4 font-semibold">Mesa ${numero}</td>
-        <td class="px-6 py-4 align-middle">
-          <div class="estado-view ${canEdit ? '' : 'opacity-70'}">
-            ${badgeEstado(mesa.estado)}
-          </div>
-          <div class="estado-edit hidden">
-            ${selectEstadoHTML(mesa.estado)}
-          </div>
-        </td>
-        <td class="px-6 py-4">
-          ${
-            canEdit
-            ? `<button class="btn-editar bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-4 py-2 rounded-lg shadow hover:opacity-90 transition">Editar</button>
-               <div class="mt-2 hidden gap-2 acciones-edit">
-                 <button class="btn-guardar bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700">Guardar</button>
-                 <button class="btn-cancelar bg-gray-200 text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
-               </div>`
-            : `<span class="inline-flex items-center gap-2 text-gray-500">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 015 5v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2h1V7a5 5 0 015-5zm3 8V7a3 3 0 00-6 0v3h6z"/></svg>
-                 No editable
-               </span>`
-          }
-        </td>
-      </tr>
-    `;
-  }
-
-  async function renderTabla(){
     try {
       const res = await fetch(`${API_BASE}/mesas`);
       const data = await res.json();
       mesas = Array.isArray(data) ? data : [];
+
+      if (!mesas.length) {
+        grid.innerHTML = '<div class="col-span-full text-center py-6" style="color: var(--text-secondary);">No hay mesas registradas.</div>';
+      } else {
+        grid.innerHTML = '';
+        mesas.forEach(m => grid.appendChild(renderCard(m)));
+      }
+      actualizarContadores();
     } catch (err) {
-      console.error('Error al obtener mesas desde API:', err);
-      mesas = [];
+      console.error('Error al cargar mesas:', err);
+      grid.innerHTML = '<div class="col-span-full text-center py-6 text-red-600">No se pudieron cargar las mesas.</div>';
     }
-
-    const tbody = document.getElementById('tbodyMesas');
-    if (!tbody) return;
-    tbody.innerHTML = mesas.map(renderFila).join('');
-
-    actualizarContadores();
-
-    tbody.querySelectorAll('tr').forEach(tr => {
-      const btnEditar = tr.querySelector('.btn-editar');
-      const accionesEdit = tr.querySelector('.acciones-edit');
-      const view = tr.querySelector('.estado-view');
-      const edit = tr.querySelector('.estado-edit');
-
-      if (btnEditar){
-        btnEditar.addEventListener('click', () => {
-          view.classList.add('hidden');
-          edit.classList.remove('hidden');
-          btnEditar.classList.add('hidden');
-          accionesEdit.classList.remove('hidden');
-        });
-      }
-
-      const btnGuardar = tr.querySelector('.btn-guardar');
-      const btnCancelar = tr.querySelector('.btn-cancelar');
-      if (btnGuardar && btnCancelar){
-        btnGuardar.addEventListener('click', async () => {
-          const id = tr.dataset.id;
-          const select = tr.querySelector('select');
-          const nuevo = select.value;
-
-          try {
-            const res = await fetch(`${API_BASE}/mesas/${id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ estado: nuevo })
-            });
-            if (!res.ok) throw new Error('Error al actualizar mesa');
-
-            const resp = await res.json();
-            const item = mesas.find(m => (m._id || m.id) == id);
-            if (item) item.estado = nuevo;
-            view.innerHTML = badgeEstado(nuevo);
-
-            view.classList.remove('hidden');
-            edit.classList.add('hidden');
-            accionesEdit.classList.add('hidden');
-            if (btnEditar) btnEditar.classList.remove('hidden');
-
-            actualizarContadores();
-          } catch (err) {
-            console.error('Error al guardar mesa:', err);
-            alert('No se pudo actualizar la mesa. Intente de nuevo.');
-          }
-        });
-
-        btnCancelar.addEventListener('click', () => {
-          view.classList.remove('hidden');
-          edit.classList.add('hidden');
-          accionesEdit.classList.add('hidden');
-          if (btnEditar) btnEditar.classList.remove('hidden');
-        });
-      }
-    });
   }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const mozo = JSON.parse(localStorage.getItem('mozo') || '{}');
-    const nombre = localStorage.getItem('usuarioNombre') || mozo.nombre || 'Usuario Invitado';
-    const userNameEl = document.getElementById('userName');
-    const userAvatarEl = document.getElementById('userAvatar');
-    if (userNameEl) userNameEl.textContent = nombre;
-    if (userAvatarEl) userAvatarEl.textContent = nombre.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase();
-
-    const userMenu = document.getElementById('userMenu');
-    const btn = document.getElementById('userMenuButton');
-    const dd = document.getElementById('userDropdown');
-    const chevron = document.getElementById('chevron');
-    if (btn && dd) {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        dd.classList.toggle('hidden');
-        const expanded = dd.classList.contains('hidden') ? 'false' : 'true';
-        btn.setAttribute('aria-expanded', expanded);
-        if (chevron) chevron.classList.toggle('rotate-180', expanded === 'true');
-      });
-    }
-    document.addEventListener('click', e => {
-      if (userMenu && dd && !userMenu.contains(e.target)) {
-        dd.classList.add('hidden');
-        if (chevron) chevron.classList.remove('rotate-180');
-      }
-    });
-
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('usuarioNombre');
-        localStorage.removeItem('usuarioId');
-        sessionStorage.clear();
-        window.location.href = '../login/login.html';
-      });
-    }
-
-    renderTabla();
-  });
 })();
-

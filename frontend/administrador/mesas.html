@@ -15,6 +15,14 @@
       .text-gray-600, .text-gray-700, .text-gray-500 { color: var(--text-secondary) !important; }
       .border-gray-100, .border-gray-200 { border-color: var(--border-color) !important; }
       #userDropdown { background: var(--card-bg) !important; color: var(--text-primary) !important; border: 1px solid var(--border-color) !important; }
+      .mesa-card { padding: 1.25rem; border-radius: 1.5rem; border: 1px solid var(--border-color); background: var(--card-bg); box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 0.75rem; transition: transform .2s ease, box-shadow .2s ease; }
+      .mesa-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow-hover); }
+      .mesa-icon { width: 4rem; height: 2.4rem; border-radius: 0.9rem; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: #1e293b; position: relative; overflow: hidden; }
+      .mesa-icon::before { content:""; position:absolute; inset:0; border-radius:inherit; border:2px solid currentColor; opacity:0.7; }
+      .mesa-status { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; font-size: 0.9rem; }
+      .mesa-actions { display: none; gap: 0.5rem; flex-wrap: wrap; }
+      .mesa-actions.visible { display: flex; }
+      .mesa-select { border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.35rem 0.75rem; background: var(--bg-secondary); color: var(--text-primary); }
     </style>
     <script>
       // Aplicar tema inmediatamente para evitar flash de contenido sin tema
@@ -94,29 +102,17 @@
         </article>
       </section>
 
-      <section class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        <div class="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h2 class="text-2xl font-semibold text-purple-900">Mesas</h2>
-          <p class="text-sm text-gray-500" id="estadoMesas">Actualizado hace unos segundos</p>
+      <section class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6" style="color: var(--text-secondary);">
+          <div class="flex flex-wrap gap-4 text-sm">
+            <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#22c55e;"></span>Libre</span>
+            <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#facc15;"></span>Ocupada</span>
+            <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#38bdf8;"></span>Reservada</span>
+            <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#94a3b8;"></span>Mantenimiento</span>
+          </div>
+          <p id="estadoMesas" class="text-xs"></p>
         </div>
-        <div class="overflow-x-auto border-t border-gray-100">
-          <table class="min-w-full divide-y divide-gray-200" aria-describedby="estadoMesas">
-            <thead class="bg-purple-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-purple-900">Mesa</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-purple-900">Estado actual</th>
-                <th scope="col" class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-purple-900">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyMesas" class="divide-y divide-gray-100">
-              <tr>
-                <td colspan="3" class="px-6 py-6 text-center text-sm text-gray-500">
-                  Cargando mesas...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" id="gridMesas"></div>
       </section>
     </main>
 

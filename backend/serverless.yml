@@ -9,8 +9,6 @@ provider:
   stage: ${env:STAGE, 'prod'}
   timeout: 29
   memorySize: 512
-  iam:
-    role: arn:aws:iam::905418401149:role/LabRole
   environment:
     NODE_OPTIONS: '--enable-source-maps'
     FRONT_ORIGIN: ${env:FRONT_ORIGIN, 'https://pedido360-front.s3.us-east-1.amazonaws.com'}

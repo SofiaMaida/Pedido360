@@ -14,7 +14,15 @@
     return num.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+const ESTADO_UI = {
+  'pendiente': { label: 'Por atender', color: '#facc15' },
+  'preparando': { label: 'En cocina', color: '#3b82f6' },
+  'en 10 min': { label: 'Por servir', color: '#a855f7' },
+  'listo para servir': { label: 'Listo', color: '#22c55e' },
+  'entregado': { label: 'Entregado', color: '#94a3b8' }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
     setupUserInfo();
     cargarPedidos();
   });
@@ -94,7 +102,7 @@
       let pedidos = await res.json();
       if (!Array.isArray(pedidos)) pedidos = [];
 
-      renderTabla(pedidos);
+      renderTarjetas(pedidos);
       actualizarContadores(pedidos);
     } catch (error) {
       console.error('Error al cargar pedidos:', error);
@@ -115,49 +123,66 @@
     if (elList) elList.textContent = String(c['listo para servir'] || 0);
   }
 
-  function renderTabla(pedidos) {
-    const tbody = document.getElementById('tablaPedidos');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+  function renderTarjetas(pedidos) {
+    const grid = document.getElementById('gridPedidos');
+    if (!grid) return;
+    grid.innerHTML = '';
     pedidos.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
 
+    if (!pedidos.length) {
+      grid.innerHTML = '<div class="col-span-full text-center py-6 text-sm" style="color: var(--text-secondary);">No hay pedidos registrados.</div>';
+      return;
+    }
+
     pedidos.forEach(pedido => {
-      const fila = document.createElement('tr');
-      fila.className = 'hover:bg-gray-50 cursor-pointer';
+      const meta = ESTADO_UI[normalizeEstado(pedido.estado)] || ESTADO_UI.pendiente;
+      const card = document.createElement('article');
+      card.className = 'pedido-card';
+      card.style.borderColor = meta.color;
+      card.style.boxShadow = `0 10px 30px ${meta.color}22`;
 
-      const items = Array.isArray(pedido.items) ? pedido.items : [];
-      const itemsResumen = items.map(it => `${it.cantidad ?? 1}x ${it.nombre ?? it.menuItem?.nombre ?? 'Item'}`).join(', ');
+      const items = Array.isArray(pedido.items) ? pedido.items.map(it => `<li>${it.cantidad ?? 1} x ${it.nombre ?? it.menuItem?.nombre ?? 'Item'}</li>`).join('') : '<li>Sin items</li>';
+      const hora = pedido.createdAt ? new Date(pedido.createdAt).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}) : '--:--';
 
-      fila.innerHTML = `
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${pedido._id}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mesa ${pedido.mesa?.numero ?? 'N/A'}</td>
-        <td class="px-6 py-4 text-sm text-gray-900">${pedido.descripcion || '-'}</td>
-        <td class="px-6 py-4 text-sm text-gray-900">${itemsResumen || 'Sin items'}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatCurrency(pedido.total)}</td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoColor(normalizeEstado(pedido.estado))}">
-            ${normalizeEstado(pedido.estado)}
-          </span>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          ${pedido.createdAt ? new Date(pedido.createdAt).toLocaleString('es-AR') : '-'}
-        </td>
+      card.innerHTML = `
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-xs" style="color: var(--text-secondary);">Mesa</p>
+            <p class="text-2xl font-bold" style="color: var(--text-primary);">${pedido.mesa?.numero ?? 'N/A'}</p>
+          </div>
+          <div class="pedido-chip" style="color:${meta.color};">
+            <span style="background:${meta.color};"></span>${meta.label}
+          </div>
+        </div>
+        <ul class="pedido-items list-disc ml-5">${items}</ul>
+        <div class="text-sm" style="color: var(--text-secondary);">${hora} · Total: <strong style="color: var(--text-primary);">${formatCurrency(pedido.total)}</strong></div>
+        <div class="pedido-actions">
+          <button class="btn-ver bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-500">Ver</button>
+          <span class="text-sm text-gray-400">${normalizeEstado(pedido.estado)}</span>
+        </div>
       `;
 
-      fila.addEventListener('click', () => mostrarDetalles(pedido));
-      tbody.appendChild(fila);
+      card.querySelector('.btn-ver').addEventListener('click', () => mostrarDetalles(pedido));
+      
+      grid.appendChild(card);
     });
   }
 
-  function getEstadoColor(estadoNorm) {
-    const colores = {
-      'pendiente': 'bg-yellow-100 text-yellow-800',
-      'preparando': 'bg-blue-100 text-blue-800',
-      'en 10 min': 'bg-purple-100 text-purple-800',
-      'listo para servir': 'bg-green-100 text-green-800',
-      'entregado': 'bg-gray-100 text-gray-800'
-    };
-    return colores[estadoNorm] || 'bg-gray-100 text-gray-800';
+  async function marcarEntregado(id) {
+    if (!confirm('¿Marcar este pedido como entregado?')) return;
+    try {
+      const res = await fetch(`${API_BASE}/pedido/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: 'entregado' })
+      });
+      if (!res.ok) throw new Error('Error al actualizar');
+      await res.json();
+      cargarPedidos();
+    } catch (err) {
+      console.error('Error al marcar entregado:', err);
+      alert('No se pudo actualizar el pedido.');
+    }
   }
 
   function mostrarDetalles(pedido) {

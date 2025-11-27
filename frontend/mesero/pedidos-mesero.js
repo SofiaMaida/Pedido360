@@ -5,6 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setupUserInfo();
     cargarPedidos();
 });
+const ESTADO_UI = {
+    'pendiente': { label: 'Por atender', color: '#facc15', bg: 'rgba(250,204,21,0.15)' },
+    'preparando': { label: 'En cocina', color: '#3b82f6', bg: 'rgba(59,130,246,0.15)' },
+    'en 10 min': { label: 'Por servir', color: '#a855f7', bg: 'rgba(168,85,247,0.15)' },
+    'listo para servir': { label: 'Listo', color: '#22c55e', bg: 'rgba(34,197,94,0.15)' },
+    'entregado': { label: 'Entregado', color: '#94a3b8', bg: 'rgba(148,163,184,0.15)' }
+};
 function setupUserInfo() {
     // Obtener información del usuario del localStorage
     const nombre = localStorage.getItem('usuarioNombre') || 'Mesero';
@@ -69,8 +76,8 @@ async function cargarPedidos() {
         const response = await fetch(`${API_BASE}/pedido/mesero/${idMesero}`);
         const pedidos = await response.json();
         
-        const tbody = document.getElementById('tablaPedidos');
-        tbody.innerHTML = '';
+        const grid = document.getElementById('gridPedidos');
+        grid.innerHTML = '';
 
         let contadores = {
             pendiente: 0,
@@ -80,40 +87,17 @@ async function cargarPedidos() {
         };
 
         pedidos.forEach(pedido => {
-            const fila = document.createElement('tr');
-            fila.className = 'hover:bg-gray-50 cursor-pointer';
-            
-            // Formatear los items para mostrar
-            const itemsResumen = pedido.items.map(item => 
-                `${item.cantidad}x ${item.nombre}`
-            ).join(', ');
+            const card = crearCardPedido(pedido);
+            grid.appendChild(card);
 
-            fila.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${pedido._id}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Mesa ${pedido.mesa?.numero || 'N/A'}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">${pedido.descripcion || '-'}</td>
-                <td class="px-6 py-4 text-sm text-gray-900">${itemsResumen || 'Sin items'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${pedido.total || 0}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoColor(pedido.estado)}">
-                        ${pedido.estado}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${new Date(pedido.createdAt).toLocaleString()}
-                </td>
-            `;
-
-            // Actualizar contadores
             if (contadores.hasOwnProperty(pedido.estado)) {
                 contadores[pedido.estado]++;
             }
-
-            // Agregar evento para mostrar detalles
-            fila.addEventListener('click', () => mostrarDetalles(pedido));
-            tbody.appendChild(fila);
         });
 
+        if (!pedidos.length) {
+            grid.innerHTML = '<div class="col-span-full text-center text-sm py-6" style="color: var(--text-secondary);">Aún no tienes pedidos asignados.</div>';
+        }
         // Actualizar contadores en la UI
         document.getElementById('contadorPendientes').textContent = contadores.pendiente;
         document.getElementById('contadorPreparacion').textContent = contadores.preparando;
@@ -126,15 +110,57 @@ async function cargarPedidos() {
     }
 }
 
-function getEstadoColor(estado) {
-    const colores = {
-        'pendiente': 'bg-yellow-100 text-yellow-800',
-        'preparando': 'bg-blue-100 text-blue-800',
-        'en 10 min': 'bg-purple-100 text-purple-800',
-        'listo para servir': 'bg-green-100 text-green-800',
-        'entregado': 'bg-gray-100 text-gray-800'
-    };
-    return colores[estado] || 'bg-gray-100 text-gray-800';
+function crearCardPedido(pedido){
+    const meta = ESTADO_UI[pedido.estado] || ESTADO_UI['pendiente'];
+    const card = document.createElement('article');
+    card.className = 'pedido-card';
+    card.style.borderColor = meta.color;
+    card.style.boxShadow = `0 10px 30px ${meta.bg}`;
+
+    const items = (pedido.items || []).map(item => `<li>${item.cantidad} x ${item.nombre}</li>`).join('') || '<li>Sin items</li>';
+    const hora = new Date(pedido.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+
+    card.innerHTML = `
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-xs" style="color: var(--text-secondary);">Mesa</p>
+          <p class="text-2xl font-bold" style="color: var(--text-primary);">${pedido.mesa?.numero || 'N/A'}</p>
+        </div>
+        <div class="pedido-chip" style="color:${meta.color};">
+          <span style="background:${meta.color};"></span>${meta.label}
+        </div>
+      </div>
+      <ul class="pedido-items list-disc ml-5">${items}</ul>
+      <div class="text-sm" style="color: var(--text-secondary);">${hora} · Total: <strong style="color: var(--text-primary);">$${pedido.total || 0}</strong></div>
+      <div class="pedido-actions">
+        <button class="btn-ver bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-500">Ver</button>
+        ${pedido.estado !== 'entregado' ? '<button class="btn-entregar bg-emerald-600 text-white px-4 py-2 rounded-lg shadow hover:bg-emerald-500">Entregado</button>' : '<span class="text-sm text-gray-400">Pedido entregado</span>'}
+      </div>
+    `;
+
+    card.querySelector('.btn-ver').addEventListener('click', () => mostrarDetalles(pedido));
+    const btnEntregar = card.querySelector('.btn-entregar');
+    if (btnEntregar) {
+        btnEntregar.addEventListener('click', () => marcarEntregado(pedido._id));
+    }
+    return card;
+}
+
+async function marcarEntregado(id){
+    if (!confirm('¿Marcar este pedido como entregado?')) return;
+    try {
+        const res = await fetch(`${API_BASE}/pedido/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estado: 'entregado' })
+        });
+        if (!res.ok) throw new Error('Error al actualizar');
+        await res.json();
+        cargarPedidos();
+    } catch (err) {
+        console.error(err);
+        alert('No se pudo marcar como entregado');
+    }
 }
 
 function mostrarDetalles(pedido) {

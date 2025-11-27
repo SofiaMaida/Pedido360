@@ -31,7 +31,7 @@
 
 /* Tarjetas de información/timeline adaptadas al tema */
 .info-card {
-  background-color: var(--card-bg);
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   border-radius: 0.75rem; /* igual a rounded-lg */
@@ -40,11 +40,13 @@
 
 .text-primary-var { color: var(--text-primary); }
 .text-secondary-var { color: var(--text-secondary); }
+.text-brand-var { color: var(--brand); }
+.text-success-var { color: #22c55e; }
 
 .skeleton { background-color: var(--border-color); }
 
 .timeline-card {
-  background-color: var(--card-bg);
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
   border-radius: 0.5rem; /* rounded */
   box-shadow: var(--card-shadow);

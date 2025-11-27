@@ -76,7 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2) Setear nombre e iniciales (protegemos si los elementos no existen)
   const userNameEl = document.getElementById('userName');
   const userAvatarEl = document.getElementById('userAvatar');
+  const nombreUI = document.getElementById('nombreUsuario');
   if (userNameEl) userNameEl.textContent = nombre;
+  if (nombreUI) nombreUI.textContent = nombre.split(' ')[0];
 
   function getInitials(n) {
     return n.trim().split(/\s+/).map(p => p[0]).slice(0,2).join('').toUpperCase();

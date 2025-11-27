@@ -30,74 +30,58 @@ const API_BASE = window.API_BASE || localStorage.getItem('API_BASE') || 'http://
 
 // Ajustado a los valores del modelo en backend: ['libre','ocupada','reservada','mantenimiento']
 const ESTADOS = [
-  { value: 'libre',        label: 'Libre',        cls: 'bg-green-100 text-green-700' },
-  { value: 'ocupada',      label: 'Ocupada',      cls: 'bg-yellow-100 text-yellow-700' },
-  { value: 'reservada',    label: 'Reservada',    cls: 'bg-blue-100 text-blue-700' },
-  { value: 'mantenimiento',label: 'Mantenimiento', cls: 'bg-gray-200 text-gray-600' },
+  { value: 'libre',        label: 'Libre',        color: '#22c55e' },
+  { value: 'ocupada',      label: 'Ocupada',      color: '#facc15' },
+  { value: 'reservada',    label: 'Reservada',    color: '#38bdf8' },
+  { value: 'mantenimiento',label: 'Mantenimiento', color: '#94a3b8' },
 ];
 let mesas = []; // se llenará desde la API
 
 // Helpers
 const estadoMeta = (v) => ESTADOS.find(e => e.value === v) || ESTADOS[0];
+const alphaColor = (hex, alpha='33') => `${hex}${alpha}`;
 
-function badgeEstado(v){
-  const m = estadoMeta(v);
-  return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${m.cls}">${m.label}</span>`;
-}
-
-function selectEstadoHTML(actual){
-  return `
-    <select class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-300">
-      ${ESTADOS.map(e=>`<option value="${e.value}" ${e.value===actual?'selected':''}>${e.label}</option>`).join('')}
-    </select>
-  `;
-}
-
-function renderFila(mesa){
+function renderCard(mesa){
   const meta = estadoMeta(mesa.estado);
-  // Backend devuelve _id y numero. si no hay campo `editable`, asumimos editable = true salvo mantenimiento
   const canEdit = mesa.hasOwnProperty('editable') ? !!mesa.editable : (mesa.estado !== 'mantenimiento');
-  const rowId = mesa._id || mesa.id || (mesa.numero !== undefined ? String(mesa.numero) : null) || null;
+  const cardId = mesa._id || mesa.id || (mesa.numero !== undefined ? String(mesa.numero) : null) || null;
   const numero = (mesa.numero !== undefined && mesa.numero !== null && mesa.numero !== '')
     ? mesa.numero
     : (mesa._id ? String(mesa._id).slice(-6) : 'N/A');
 
   return `
-    <tr data-id="${rowId}">
-      <td class="px-6 py-4 font-semibold">Mesa ${numero}</td>
-      <!-- Columna 2: estado (badge o editor) -->
-      <td class="px-6 py-4 align-middle">
-        <div class="estado-view ${canEdit ? '' : 'opacity-70'}">
-          ${badgeEstado(mesa.estado)}
+    <div class="mesa-card" data-id="${cardId}">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="mesa-icon" style="background:${alphaColor(meta.color, '33')}; border:2px solid ${meta.color};">${numero}</div>
+          <div>
+            <p class="text-xs" style="color: var(--text-secondary);">Mesa</p>
+            <p class="text-lg font-semibold" style="color: var(--text-primary);">${numero}</p>
+          </div>
         </div>
-        <div class="estado-edit hidden">
-          ${selectEstadoHTML(mesa.estado)}
+        ${canEdit ? `<button class="btn-editar text-sm font-semibold text-indigo-600 hover:text-indigo-500">Cambiar estado</button>` : `<span class="text-sm text-gray-400">No editable</span>`}
+      </div>
+      <div class="mesa-status" style="color:${meta.color};">
+        <span class="w-3 h-3 rounded-full mesa-status-dot" style="background:${meta.color};"></span>
+        <span class="mesa-status-text">${meta.label}</span>
+      </div>
+      ${canEdit ? `
+        <div class="mesa-actions">
+          <select class="mesa-select">
+            ${ESTADOS.map(e=>`<option value="${e.value}" ${e.value===mesa.estado?'selected':''}>${e.label}</option>`).join('')}
+          </select>
+          <button class="btn-guardar bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700">Guardar</button>
+          <button class="btn-cancelar bg-gray-200 text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
         </div>
-      </td>
-      <!-- Columna 3: acción -->
-      <td class="px-6 py-4">
-        ${
-          canEdit
-          ? `<button class="btn-editar bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-4 py-2 rounded-lg shadow hover:opacity-90 transition">Editar</button>
-             <div class="mt-2 hidden gap-2 acciones-edit">
-               <button class="btn-guardar bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700">Guardar</button>
-               <button class="btn-cancelar bg-gray-200 text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
-             </div>`
-          : `<button class="inline-flex items-center gap-2 text-gray-500 bg-gray-100 px-3 py-2 rounded-lg" disabled aria-disabled="true">
-               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 015 5v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2h1V7a5 5 0 015-5zm3 8V7a3 3 0 00-6 0v3h6z"/></svg>
-               No editable
-             </button>`
-        }
-      </td>
-    </tr>
+      ` : ''}
+    </div>
   `;
 }
 
-async function renderTabla(){
-  const tbody = document.getElementById('tbodyMesas');
-  if (!tbody) return;
-  
-  tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">Cargando mesas...</td></tr>';
+async function renderTarjetas(){
+  const grid = document.getElementById('mesasGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="col-span-full text-center py-6">Cargando mesas...</div>';
   
   try {
     const res = await fetch(`${API_BASE}/mesas`);
@@ -108,40 +92,36 @@ async function renderTabla(){
     mesas = data;
     
     if (mesas.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">No hay mesas disponibles</td></tr>';
+      grid.innerHTML = '<div class="col-span-full text-center py-6">No hay mesas disponibles</div>';
     } else {
-      tbody.innerHTML = mesas.map(renderFila).join('');
+      grid.innerHTML = mesas.map(renderCard).join('');
     }
   } catch (err) {
     console.error('Error al obtener mesas desde API:', err);
     mesas = [];
-    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-red-600">Error al cargar las mesas. Por favor, recarga la página.</td></tr>';
+    grid.innerHTML = '<div class="col-span-full text-center py-6 text-red-600">Error al cargar las mesas. Por favor, recarga la página.</div>';
   }
 
-  // Listeners por fila
-  tbody.querySelectorAll('tr').forEach(tr => {
-    const btnEditar = tr.querySelector('.btn-editar');
-    const accionesEdit = tr.querySelector('.acciones-edit');
-    const view = tr.querySelector('.estado-view');
-    const edit = tr.querySelector('.estado-edit');
+  // Listeners por tarjeta
+  grid.querySelectorAll('.mesa-card').forEach(card => {
+    const btnEditar = card.querySelector('.btn-editar');
+    const actions = card.querySelector('.mesa-actions');
+    const statusText = card.querySelector('.mesa-status-text');
+    const dot = card.querySelector('.mesa-status-dot');
+    const icon = card.querySelector('.mesa-icon');
 
-    if (btnEditar){
+    if (btnEditar && actions){
       btnEditar.addEventListener('click', () => {
-        view.classList.add('hidden');
-        edit.classList.remove('hidden');
-        btnEditar.classList.add('hidden');
-        accionesEdit.classList.remove('hidden');
+        actions.classList.toggle('visible');
       });
-    }
 
-    const btnGuardar = tr.querySelector('.btn-guardar');
-    const btnCancelar = tr.querySelector('.btn-cancelar');
-    if (btnGuardar && btnCancelar){
+      const btnGuardar = card.querySelector('.btn-guardar');
+      const btnCancelar = card.querySelector('.btn-cancelar');
+      const select = actions.querySelector('select');
+
       btnGuardar.addEventListener('click', async () => {
-        const id = tr.dataset.id; // id en la BBDD probablemente sea string (ObjectId)
-        const select = tr.querySelector('select');
+        const id = card.dataset.id;
         const nuevo = select.value;
-
         try {
           const res = await fetch(`${API_BASE}/mesas/${id}`, {
             method: 'PUT',
@@ -149,19 +129,15 @@ async function renderTabla(){
             body: JSON.stringify({ estado: nuevo })
           });
           if (!res.ok) throw new Error('Error al actualizar mesa');
-
-          const resp = await res.json();
-          // Actualizar en memoria (si existe la propiedad _id o id)
+          await res.json();
           const item = mesas.find(m => (m._id || m.id) == id);
           if (item) item.estado = nuevo;
-          // refrescar solo la vista del badge
-          view.innerHTML = badgeEstado(nuevo);
-
-          // salir del modo edición
-          view.classList.remove('hidden');
-          edit.classList.add('hidden');
-          accionesEdit.classList.add('hidden');
-          if (btnEditar) btnEditar.classList.remove('hidden');
+          const meta = estadoMeta(nuevo);
+          statusText.textContent = meta.label;
+          dot.style.background = meta.color;
+          icon.style.borderColor = meta.color;
+          icon.style.background = alphaColor(meta.color, '33');
+          actions.classList.remove('visible');
         } catch (err) {
           console.error('Error al guardar mesa:', err);
           alert('No se pudo actualizar la mesa. Intente de nuevo.');
@@ -169,16 +145,12 @@ async function renderTabla(){
       });
 
       btnCancelar.addEventListener('click', () => {
-        // rollback visual: simplemente salir del modo edición
-        view.classList.remove('hidden');
-        edit.classList.add('hidden');
-        accionesEdit.classList.add('hidden');
-        if (btnEditar) btnEditar.classList.remove('hidden');
+        actions.classList.remove('visible');
       });
     }
   });
 }
 
 // Inicializar
-document.addEventListener('DOMContentLoaded', renderTabla);
+document.addEventListener('DOMContentLoaded', renderTarjetas);
 })();

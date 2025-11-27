@@ -16,7 +16,7 @@ body {
 
 /* Barra de filtros respetando tema */
 .filter-bar {
-    background: var(--bg-tertiary);
+    background: var(--card-bg);
     color: var(--text-primary);
     border: 1px solid var(--border-color);
 }
@@ -40,6 +40,132 @@ body {
 /* Divisor entre items de platos controlado por variables */
 .dish-list > * + * {
     border-top: 1px solid var(--border-color);
+}
+
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.125rem 0.5rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+.priority-alta {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+}
+.priority-media {
+    background: rgba(251, 191, 36, 0.18);
+    color: #fcd34d;
+}
+.priority-baja {
+    background: rgba(14, 165, 233, 0.18);
+    color: #bae6fd;
+}
+
+.dish-quantity {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background: rgba(129, 140, 248, 0.25);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+}
+
+.dish-status {
+    border-radius: 9999px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.dish-status.pendiente {
+    background: rgba(148, 163, 184, 0.25);
+    color: var(--text-primary);
+}
+.dish-status.preparando {
+    background: rgba(234, 179, 8, 0.25);
+    color: #fcd34d;
+}
+.dish-status.ya-casi {
+    background: rgba(253, 186, 116, 0.25);
+    color: #fed7aa;
+}
+.dish-status.listo {
+    background: rgba(34, 197, 94, 0.25);
+    color: #bbf7d0;
+}
+
+.dish-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.65rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 0.45rem;
+    justify-content: space-between;
+    min-height: 2.4rem;
+}
+
+.dish-item .dish-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.dish-name {
+    font-weight: 500;
+    min-width: 0;
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.dish-status {
+    width: 160px;
+    justify-content: center;
+    text-align: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+@media (max-width: 640px) {
+    .dish-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+    .dish-status {
+        align-self: flex-end;
+        margin-left: 0;
+    }
+    .dish-item .dish-info {
+        width: 100%;
+    }
+}
+
+.nota-cocina {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+}
+
+.pedido-card {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    box-shadow: var(--card-shadow);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
 }
 
 .barra-superior {

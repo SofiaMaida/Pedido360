@@ -14,12 +14,14 @@
     body { background: var(--gradient-bg); color: var(--text-primary); }
     .bg-white, .bg-white\/80, .bg-white\/90, .bg-white\/95, .bg-purple-50\/80, .bg-purple-50\/60 { background-color: var(--card-bg) !important; }
     .text-gray-800, .text-gray-900 { color: var(--text-primary) !important; }
-    .text-gray-600, .text-gray-700, .text-gray-500 { color: var(--text-secondary) !important; }
+    .text-gray-600, .text-gray-700, .text-gray-500, .text-purple-700, .text-purple-900 { color: var(--text-secondary) !important; }
     .border-gray-100, .border-gray-200, .border-purple-100 { border-color: var(--border-color) !important; }
+    .hover\:bg-gray-50:hover { background-color: var(--bg-tertiary) !important; }
     .divide-gray-200 { border-color: var(--border-color) !important; }
     footer { background: var(--bg-secondary) !important; color: var(--text-secondary) !important; }
     #userDropdown { background: var(--card-bg) !important; color: var(--text-primary) !important; border: 1px solid var(--border-color) !important; }
     table { color: var(--text-primary) !important; }
+    thead { background: var(--gradient-primary) !important; color: var(--text-inverse) !important; }
   </style>
   <style>
     body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial; }
@@ -101,40 +103,31 @@
       </div>
     </section>
 
-    <!-- Tabla de pedidos -->
-    <section class="overflow-x-auto rounded-2xl shadow-xl border border-gray-100">
-      <table class="min-w-full text-sm text-gray-800 bg-white/95 rounded-2xl overflow-hidden">
-        <!-- Encabezado con gradiente -->
-        <thead class="bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
-          <tr>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">ID</th>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">Mesa</th>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">Descripción</th>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">Items</th>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">Total</th>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">Estado</th>
-            <th class="px-6 py-4 text-left font-semibold tracking-wide">Fecha</th>
-          </tr>
-        </thead>
-        <tbody id="tablaPedidos" class="divide-y divide-gray-200">
-          <!-- filas dinámicas por pedidos-mesero.js -->
-        </tbody>
-      </table>
+    <!-- Panel de tarjetas -->
+    <section class="rounded-2xl shadow-xl border border-gray-100 p-6" style="background: var(--card-bg);">
+      <div class="flex flex-wrap gap-4 text-sm mb-6" style="color: var(--text-secondary);">
+        <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#facc15;"></span>Por atender</span>
+        <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#3b82f6;"></span>En cocina</span>
+        <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#a855f7;"></span>Por servir</span>
+        <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#22c55e;"></span>Listo</span>
+        <span class="inline-flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full" style="background:#94a3b8;"></span>Entregado</span>
+      </div>
+      <div id="gridPedidos" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
     </section>
   </main>
 
   <!-- Modal para ver detalles del pedido -->
-  <div id="modalDetalles" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-    <div class="relative mx-auto mt-24 w-11/12 md:w-3/4 lg:w-1/2">
-      <div class="rounded-2xl bg-white shadow border border-gray-100">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 class="text-lg font-bold text-gray-900">Detalles del Pedido</h3>
-          <button id="cerrarModal"
-                  class="inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-100 text-gray-600"
-                  aria-label="Cerrar">
-            &times;
-          </button>
+    <div id="modalDetalles" class="hidden fixed inset-0 z-50 flex items-start justify-center p-4">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+      <div class="relative z-10 mt-10 w-full max-w-3xl">
+        <div class="rounded-2xl shadow border border-gray-100" style="background: var(--card-bg); color: var(--text-primary); max-height: 80vh; overflow-y: auto;">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100" style="border-color: var(--border-color);">
+            <h3 class="text-lg font-bold">Detalles del Pedido</h3>
+            <button id="cerrarModal"
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-100 text-gray-600"
+                    aria-label="Cerrar">
+              &times;
+            </button>
         </div>
         <div id="detallesPedido" class="px-6 py-5 space-y-4">
           <!-- contenido dinámico -->
@@ -171,6 +164,25 @@
       }
     })();
   </script>
+  <style>
+    .pedido-card {
+      border: 1px solid var(--border-color);
+      border-radius: 1.25rem;
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pedido-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow-hover); }
+    .pedido-chip { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; font-size: 0.85rem; }
+    .pedido-chip span { width: 0.65rem; height: 0.65rem; border-radius: 9999px; display: inline-block; }
+    .pedido-items { font-size: 0.9rem; color: var(--text-secondary); }
+    .pedido-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
+  </style>
 
   <!-- Tu lógica existente -->
   <script src="pedidos-mesero.js"></script>

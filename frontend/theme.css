@@ -108,8 +108,8 @@
 /* Estilos para el botón de toggle de tema */
 .theme-toggle {
   position: fixed;
-  /* Ubicar unos px por debajo del header */
-  top: calc(var(--header-height, 0px) + 12px);
+  /* Ubicar cerca de la parte baja del header */
+  top: calc(var(--header-height, 0px) + 80px);
   right: 20px;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.9);

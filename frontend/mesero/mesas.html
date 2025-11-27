@@ -9,6 +9,26 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../theme.css" />
     <script src="../theme.js"></script>
+    <style>
+      body { background: var(--gradient-bg); color: var(--text-primary); }
+      .bg-white, .bg-white\/80 { background-color: var(--card-bg) !important; }
+      .text-gray-900, .text-gray-800 { color: var(--text-primary) !important; }
+      .text-gray-700, .text-gray-600, .text-gray-500, .text-purple-700, .text-purple-900 { color: var(--text-secondary) !important; }
+      .border-gray-200, .border-purple-50 { border-color: var(--border-color) !important; }
+      .hover\:bg-white\/10:hover { background-color: rgba(255,255,255,0.15) !important; }
+      #userDropdown { background: var(--card-bg) !important; color: var(--text-primary) !important; border: 1px solid var(--border-color) !important; }
+      table { background: var(--card-bg); color: var(--text-primary); }
+      thead { background: var(--gradient-primary) !important; color: var(--text-inverse) !important; }
+      tbody tr:hover { background: var (--bg-tertiary); }
+      .mesa-card { padding: 1.25rem; border-radius: 1.5rem; border: 1px solid var(--border-color); background: var(--card-bg); box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 0.75rem; transition: transform .2s ease, box-shadow .2s ease; }
+      .mesa-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow-hover); }
+      .mesa-status { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; font-size: 0.9rem; }
+      .mesa-icon { width: 3.5rem; height: 2.2rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #1e293b; font-weight: 700; font-size: 1.1rem; position: relative; overflow: hidden; }
+      .mesa-icon::before { content:""; position:absolute; inset:0; border-radius:inherit; border:2px solid currentColor; opacity:0.6; }
+      .mesa-actions { display: none; gap: 0.5rem; }
+      .mesa-actions.visible { display: flex; flex-wrap: wrap; }
+      .mesa-select { border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.35rem 0.75rem; background: var(--bg-secondary); color: var(--text-primary); }
+    </style>
   </head>
   <body class="min-h-screen flex flex-col font-sans" style="background: var(--gradient-bg); color: var(--text-primary);">
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
@@ -53,17 +73,14 @@
           </h2>
         </div>
 
-        <div class="overflow-x-auto rounded-2xl shadow-xl" style="border: 1px solid var(--border-color);">
-          <table class="min-w-full text-sm rounded-2xl overflow-hidden" style="background: var(--card-bg); color: var(--text-primary);">
-            <thead class="bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
-              <tr>
-                <th class="px-6 py-4 text-left font-semibold tracking-wide w-32">Mesa</th>
-                <th class="px-6 py-4 text-left font-semibold tracking-wide">Estado actual</th>
-                <th class="px-6 py-4 text-left font-semibold tracking-wide w-56">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyMesas" class="divide-y" style="border-color: var(--border-color);"></tbody>
-          </table>
+        <div class="rounded-2xl shadow-xl p-6 space-y-6" style="background: var(--card-bg); border: 1px solid var(--border-color);">
+          <div class="flex flex-wrap gap-4 text-sm" style="color: var(--text-secondary);">
+            <span class="inline-flex items-center gap-2"><span class="w-4 h-4 rounded-full" style="background:#22c55e;"></span>Libre</span>
+            <span class="inline-flex items-center gap-2"><span class="w-4 h-4 rounded-full" style="background:#facc15;"></span>Ocupada</span>
+            <span class="inline-flex items-center gap-2"><span class="w-4 h-4 rounded-full" style="background:#38bdf8;"></span>Reservada</span>
+            <span class="inline-flex items-center gap-2"><span class="w-4 h-4 rounded-full" style="background:#94a3b8;"></span>Mantenimiento</span>
+          </div>
+          <div id="mesasGrid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
         </div>
       </section>
     </main>

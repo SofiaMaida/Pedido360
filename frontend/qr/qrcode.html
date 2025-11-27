@@ -1,12 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+  <meta charset="UTF-8">
   <title>QR inicio.html</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../theme.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+  <script src="../theme.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gradient-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    canvas {
+      padding: 1rem;
+      background: var(--card-bg);
+      border-radius: 1rem;
+      box-shadow: var(--card-shadow);
+    }
+  </style>
 </head>
 <body>
-  <h1>QR a inicio.html</h1>
-  <canvas id="qrcode"></canvas>
+  <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
+  <h1 style="color: var(--text-primary);">QR a inicio.html</h1>
+  <canvas id="qrcode" role="img" aria-label="Código QR para inicio"></canvas>
 
   <script>
     const url = "https://pedido360-front.s3.us-east-1.amazonaws.com/frontend/inicio.html"; 
